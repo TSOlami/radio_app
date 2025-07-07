@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Events - Farmer's Radio{% endblock %}
+
+{% block content %}
+<h1>Radio Events & Programming</h1>
+
+<!-- Live Events -->
+{% if live_events %}
+<h2>🔴 Live Now</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Station</th>
+            <th>Host</th>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in live_events %}
+        <tr style="background: #fee7e6;">
+            <td>
+                <strong>{{ event.title }}</strong>
+                {% if event.description %}
+                <br><small>{{ event.description|truncatewords:15 }}</small>
+                {% endif %}
+            </td>
+            <td>{{ event.station.name }}</td>
+            <td>{{ event.host|default:"N/A" }}</td>
+            <td>{{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</td>
+            <td>{{ event.get_event_type_display }}</td>
+            <td>
+                <span class="event-status status-live" data-event-id="{{ event.id }}">
+                    <span class="live-indicator"></span>LIVE
+                </span>
+                <button class="play-btn" 
+                        data-station-id="{{ event.station.id }}"
+                        onclick="radioPlayer.play({{ event.station.id }}, '{{ event.station.name }}', '{{ event.station.stream_url }}')"
+                        title="Listen to {{ event.station.name }}">▶</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Upcoming Events -->
+<h2>📅 Upcoming Events</h2>
+{% if upcoming_events %}
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Station</th>
+            <th>Host</th>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Featured</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in upcoming_events %}
+        <tr>
+            <td>
+                <strong>{{ event.title }}</strong>
+                {% if event.description %}
+                <br><small>{{ event.description|truncatewords:15 }}</small>
+                {% endif %}
+            </td>
+            <td>{{ event.station.name }}</td>
+            <td>{{ event.host|default:"N/A" }}</td>
+            <td>
+                {{ event.start_time|date:"M d, Y H:i" }} - {{ event.end_time|date:"H:i" }}
+                <br><small>{{ event.start_time|timesince }} from now</small>
+            </td>
+            <td>{{ event.get_event_type_display }}</td>
+            <td>
+                {% if event.is_featured %}
+                    <strong>⭐ Featured</strong>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if upcoming_events.has_other_pages %}
+<div class="pagination">
+    {% if upcoming_events.has_previous %}
+        <a href="?page=1">&laquo; First</a>
+        <a href="?page={{ upcoming_events.previous_page_number }}">Previous</a>
+    {% endif %}
+    
+    <span class="current">
+        Page {{ upcoming_events.number }} of {{ upcoming_events.paginator.num_pages }}
+    </span>
+    
+    {% if upcoming_events.has_next %}
+        <a href="?page={{ upcoming_events.next_page_number }}">Next</a>
+        <a href="?page={{ upcoming_events.paginator.num_pages }}">Last &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<p>No upcoming events scheduled.</p>
+{% endif %}
+
+<!-- Event Types Legend -->
+<h3>Event Types</h3>
+<table>
+    <tr><td><strong>Live Show:</strong></td><td>Interactive live programming</td></tr>
+    <tr><td><strong>Interview:</strong></td><td>Guest interviews and discussions</td></tr>
+    <tr><td><strong>Music Special:</strong></td><td>Special music programming</td></tr>
+    <tr><td><strong>News:</strong></td><td>News broadcasts and updates</td></tr>
+    <tr><td><strong>Sports:</strong></td><td>Sports coverage and commentary</td></tr>
+    <tr><td><strong>Talk Show:</strong></td><td>Talk shows and discussions</td></tr>
+</table>
+
+<script>
+// Auto-refresh live events every 30 seconds
+setInterval(function() {
+    location.reload();
+}, 30000);
+</script>
+
+{% endblock %}
