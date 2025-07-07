@@ -561,6 +561,10 @@
                     radioPlayer.setVolume(this.value / 100);
                 });
             }
+
+            // Auto-refresh live events every 30 seconds
+            // Initialize WebSocket connections for real-time updates
+            initializeWebSockets();
         });
 
         // Refresh live events
