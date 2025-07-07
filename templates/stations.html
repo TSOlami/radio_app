@@ -92,7 +92,7 @@
             <td>{{ station.country }}</td>
             <td>{{ station.language }}</td>
             <td>{{ station.get_quality_display }}</td>
-            <td>{{ station.listeners_count }}</td>
+            <td class="listener-count" data-station-id="{{ station.id }}">{{ station.listeners_count }}</td>
             <td>
                 <button class="play-btn" 
                         data-station-id="{{ station.id }}"
