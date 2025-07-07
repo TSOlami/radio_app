@@ -561,11 +561,6 @@
                     radioPlayer.setVolume(this.value / 100);
                 });
             }
-
-            // Auto-refresh live events every 30 seconds
-            if (window.location.pathname.includes('events')) {
-                setInterval(refreshLiveEvents, 30000);
-            }
         });
 
         // Refresh live events
