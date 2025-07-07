@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from django.utils import timezone
 from datetime import timedelta
 from django.shortcuts import render, get_object_or_404, redirect
@@ -237,9 +237,10 @@ class ListeningHistoryViewSet(viewsets.ModelViewSet):
         })
 
 
-class ContactViewSet(viewsets.CreateOnlyModelViewSet):
+class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+    http_method_names = ['post']  # Only allow POST requests
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -313,8 +314,10 @@ def stations_view(request):
     
     # Filters
     category = request.GET.get('category')
+    selected_category = None
     if category:
         stations = stations.filter(category_id=category)
+        selected_category = Category.objects.filter(id=category).first()
     
     country = request.GET.get('country')
     if country:
@@ -346,6 +349,7 @@ def stations_view(request):
         'stations': stations,
         'categories': categories,
         'countries': countries,
+        'selected_category': selected_category,
     }
     return render(request, 'stations.html', context)
 
@@ -443,7 +447,7 @@ def dashboard(request):
     
     most_listened = ListeningHistory.objects.filter(user=request.user).values('station__name').annotate(
         count=Count('station'),
-        total_minutes=models.Sum('duration_minutes')
+        total_minutes=Sum('duration_minutes')
     ).order_by('-total_minutes')[:5]
     
     listening_stats = {
@@ -473,7 +477,7 @@ def listening_history_view(request):
     
     most_listened = history.values('station__name').annotate(
         count=Count('station'),
-        total_minutes=models.Sum('duration_minutes')
+        total_minutes=Sum('duration_minutes')
     ).order_by('-total_minutes')[:10]
     
     stats = {

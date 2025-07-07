@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Farmer's Radio{% endblock %}</title>
+    <title>{% block title %}Bellefu Radio{% endblock %}</title>
     <style>
         /* Wikipedia-style CSS */
         * {
@@ -98,12 +98,23 @@
             border-collapse: collapse;
             margin: 20px 0;
             border: 1px solid #a2a9b1;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 769px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
         }
 
         th, td {
             padding: 8px 12px;
             text-align: left;
             border: 1px solid #a2a9b1;
+            vertical-align: middle;
         }
 
         th {
@@ -113,6 +124,22 @@
 
         tr:nth-child(even) {
             background: #f8f9fa;
+        }
+
+        /* Actions column styling */
+        .actions-cell {
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .actions-cell > * {
+            display: inline-block;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .actions-cell > *:last-child {
+            margin-right: 0;
         }
 
         /* Forms */
@@ -222,10 +249,25 @@
             .header-content {
                 flex-direction: column;
                 gap: 10px;
+                align-items: stretch;
             }
 
             nav ul {
                 justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            nav li {
+                flex: 1;
+                min-width: 80px;
+            }
+
+            nav a {
+                display: block;
+                text-align: center;
+                padding: 8px 4px;
+                font-size: 14px;
             }
 
             .container {
@@ -238,22 +280,114 @@
 
             .player-controls {
                 flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .volume-control {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .volume-slider {
+                width: 150px;
+            }
+
+            /* Mobile table styling */
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 6px 8px;
+            }
+
+            .actions-cell {
+                min-width: 100px;
+            }
+
+            /* Stack form elements on mobile */
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .search-form .form-group {
+                margin-bottom: 0;
+            }
+
+            .search-form .form-group:not(:last-child) {
+                margin-bottom: 10px;
+            }
+
+            .search-form input {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .search-form button,
+            .search-form a {
+                width: 100%;
+                height: 44px;
+                justify-content: center;
+                margin-top: 5px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 10px;
+            }
+
+            .audio-player {
+                padding: 10px;
+            }
+
+            .player-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* Hide less important table columns on very small screens */
+            .hide-mobile {
+                display: none;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 4px 6px;
             }
         }
 
         /* Status indicators */
         .status-live {
-            color: #d33;
+            color: #000;
             font-weight: bold;
         }
 
         .status-upcoming {
-            color: #fc3;
+            color: #666;
             font-weight: bold;
         }
 
         .status-past {
-            color: #72777d;
+            color: #999;
         }
 
         /* Messages */
@@ -269,13 +403,13 @@
         }
 
         .message.success {
-            border-color: #00af89;
-            background: #d5fdf4;
+            border-color: #000;
+            background: #f0f0f0;
         }
 
         .message.error {
-            border-color: #d33;
-            background: #fee7e6;
+            border-color: #000;
+            background: #e8e8e8;
         }
 
         /* Links */
@@ -314,13 +448,44 @@
         /* Search */
         .search-form {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin: 20px 0;
             align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .search-form .form-group {
+            margin-bottom: 0;
         }
 
         .search-form input {
-            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-form button {
+            white-space: nowrap;
+            width: 44px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #000;
+            color: white;
+            border: 1px solid #000;
+        }
+
+        .search-form a {
+            white-space: nowrap;
+            width: 44px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: 1px solid #a2a9b1;
+            background: #f8f9fa;
+            color: #000;
         }
 
         /* Favorites */
@@ -348,7 +513,7 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background: #d33;
+            background: #000;
             border-radius: 50%;
             margin-right: 5px;
             animation: pulse 2s infinite;
@@ -429,7 +594,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Farmer's Radio. Broadcasting agricultural information worldwide.</p>
+            <p>&copy; 2024 Bellefu Radio. Broadcasting quality content worldwide.</p>
         </div>
     </footer>
 
