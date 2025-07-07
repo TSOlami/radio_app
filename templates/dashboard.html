@@ -11,7 +11,11 @@
 <div class="audio-player">
     <h3>Radio Player</h3>
     <div class="player-controls">
-        <button class="play-btn" onclick="radioPlayer.pause()" title="Stop">⏹</button>
+        <button class="play-btn" onclick="radioPlayer.pause()" title="Stop">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            </svg>
+        </button>
         <div class="volume-control">
             <label for="volume">Volume:</label>
             <input type="range" id="volume" class="volume-slider" min="0" max="100" value="70">
@@ -70,15 +74,33 @@
             <td>{{ station.language }}</td>
             <td>{{ station.listeners_count }}</td>
             <td>
-                <button class="play-btn" 
+                <button class="play-btn"
                         data-station-id="{{ station.id }}"
                         onclick="radioPlayer.play({{ station.id }}, '{{ station.name }}', '{{ station.stream_url }}')"
-                        title="Play">▶</button>
+                        title="Play">
+                    <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5,3 19,12 5,21"/>
+                    </svg>
+                    <svg class="pause-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="4" width="4" height="16"/>
+                        <rect x="14" y="4" width="4" height="16"/>
+                    </svg>
+                </button>
                 <button class="favorite-btn favorited"
                         onclick="toggleFavorite({{ station.id }}, this)"
-                        title="Remove from favorites">★</button>
+                        title="Remove from favorites">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                    </svg>
+                </button>
                 {% if station.website_url %}
-                <a href="{{ station.website_url }}" target="_blank" title="Visit website">🌐</a>
+                <a href="{{ station.website_url }}" target="_blank" title="Visit website">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" x2="22" y1="12" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                </a>
                 {% endif %}
             </td>
         </tr>

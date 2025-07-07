@@ -165,8 +165,8 @@
         }
 
         .play-btn {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             border: 1px solid #a2a9b1;
             background: #fff;
@@ -174,6 +174,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0;
+        }
+
+        .play-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .volume-control {
@@ -321,9 +327,16 @@
         .favorite-btn {
             background: none;
             border: 1px solid #a2a9b1;
-            padding: 5px 10px;
+            padding: 4px 8px;
             cursor: pointer;
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .favorite-btn svg {
+            width: 14px;
+            height: 14px;
         }
 
         .favorite-btn.favorited {
@@ -339,6 +352,24 @@
             border-radius: 50%;
             margin-right: 5px;
             animation: pulse 2s infinite;
+        }
+
+        /* Icon styles */
+        .icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon-small {
+            width: 12px;
+            height: 12px;
+        }
+
+        .icon-large {
+            width: 20px;
+            height: 20px;
         }
 
         @keyframes pulse {
@@ -432,6 +463,8 @@
                     return;
                 }
 
+                this.currentStationName = stationName;
+                this.currentStreamUrl = streamUrl;
                 this.currentStation = stationId;
                 this.audio.src = streamUrl;
                 this.audio.load();
@@ -482,11 +515,16 @@
             updatePlayButtons() {
                 document.querySelectorAll('.play-btn').forEach(btn => {
                     const stationId = btn.dataset.stationId;
+                    const playIcon = btn.querySelector('.play-icon');
+                    const pauseIcon = btn.querySelector('.pause-icon');
+                    
                     if (stationId == this.currentStation && this.isPlaying) {
-                        btn.textContent = '⏸';
+                        if (playIcon) playIcon.style.display = 'none';
+                        if (pauseIcon) pauseIcon.style.display = 'block';
                         btn.title = 'Pause';
                     } else {
-                        btn.textContent = '▶';
+                        if (playIcon) playIcon.style.display = 'block';
+                        if (pauseIcon) pauseIcon.style.display = 'none';
                         btn.title = 'Play';
                     }
                 });
@@ -541,7 +579,14 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    button.textContent = data.is_favorited ? '★' : '☆';
+                    const svg = button.querySelector('svg');
+                    if (data.is_favorited) {
+                        svg.setAttribute('fill', 'currentColor');
+                        svg.setAttribute('stroke', 'currentColor');
+                    } else {
+                        svg.setAttribute('fill', 'none');
+                        svg.setAttribute('stroke', 'currentColor');
+                    }
                     button.classList.toggle('favorited', data.is_favorited);
                     button.title = data.is_favorited ? 'Remove from favorites' : 'Add to favorites';
                 } else if (response.status === 401) {
@@ -784,11 +829,7 @@
                 if (radioPlayer.isPlaying) {
                     radioPlayer.pause();
                 } else if (radioPlayer.currentStation) {
-                    // Resume current station
-                    const playBtn = document.querySelector(`[data-station-id="${radioPlayer.currentStation}"]`);
-                    if (playBtn) {
-                        playBtn.click();
-                    }
+                    radioPlayer.play(radioPlayer.currentStation, radioPlayer.currentStationName, radioPlayer.currentStreamUrl);
                 }
             }
         });

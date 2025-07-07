@@ -14,12 +14,12 @@ class Command(BaseCommand):
 
         # Create categories
         categories_data = [
-            {'name': 'Agriculture', 'description': 'Farming and agricultural content', 'icon': '🌾'},
-            {'name': 'News', 'description': 'Local and international news', 'icon': '📰'},
-            {'name': 'Music', 'description': 'Various music genres', 'icon': '🎵'},
-            {'name': 'Talk Shows', 'description': 'Discussion and talk programs', 'icon': '🎙️'},
-            {'name': 'Education', 'description': 'Educational content', 'icon': '📚'},
-            {'name': 'Weather', 'description': 'Weather updates and forecasts', 'icon': '🌤️'},
+            {'name': 'Agriculture', 'description': 'Farming and agricultural content', 'icon': 'agriculture'},
+            {'name': 'News', 'description': 'Local and international news', 'icon': 'news'},
+            {'name': 'Music', 'description': 'Various music genres', 'icon': 'music'},
+            {'name': 'Talk Shows', 'description': 'Discussion and talk programs', 'icon': 'microphone'},
+            {'name': 'Education', 'description': 'Educational content', 'icon': 'education'},
+            {'name': 'Weather', 'description': 'Weather updates and forecasts', 'icon': 'weather'},
         ]
 
         categories = []
