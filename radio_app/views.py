@@ -16,6 +16,8 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import (
     Category, RadioStation, UserProfile, Event, 
@@ -85,6 +87,18 @@ class RadioStationViewSet(viewsets.ReadOnlyModelViewSet):
         station = self.get_object()
         station.listeners_count += 1
         station.save()
+        
+        # Send real-time update via WebSocket
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'stations',
+            {
+                'type': 'listener_update',
+                'station_id': station.id,
+                'listeners_count': station.listeners_count
+            }
+        )
+        
         return Response({'listeners_count': station.listeners_count})
 
     @action(detail=True, methods=['post'])
@@ -94,6 +108,18 @@ class RadioStationViewSet(viewsets.ReadOnlyModelViewSet):
         if station.listeners_count > 0:
             station.listeners_count -= 1
             station.save()
+            
+        # Send real-time update via WebSocket
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'stations',
+            {
+                'type': 'listener_update',
+                'station_id': station.id,
+                'listeners_count': station.listeners_count
+            }
+        )
+        
         return Response({'listeners_count': station.listeners_count})
 
 
