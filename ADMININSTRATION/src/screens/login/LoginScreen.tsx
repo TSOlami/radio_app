@@ -43,6 +43,8 @@ export function LoginScreen() {
         router.push("/superadmin");
       } else if (role === UserRole.MANAGER) {
         router.push("/admin");
+      } else if (role === UserRole.USER) {
+        router.push("/");
       }
     } catch (err: any) {
       setError(err.message || "OTP verification failed. Please try again.");
