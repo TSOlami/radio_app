@@ -52,9 +52,17 @@ export async function POST(req: Request) {
       const details: OtpLoginResponse = result;
 
       const token = details.data.token;
+      const role = details.data.user.role;
+      
       headers.append(
         "Set-Cookie",
         `${authCookie}=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure`
+      );
+      
+      // Also set user_role cookie for consistency
+      headers.append(
+        "Set-Cookie",
+        `user_role=${role}; Path=/; Max-Age=${maxAge}; Secure`
       );
     }
 
