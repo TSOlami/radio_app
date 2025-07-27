@@ -24,8 +24,8 @@ export default function Home() {
       <div className="container flex flex-col-reverse justify-center p-6 mx-auto md:py-12 lg:py-16 lg:flex-row lg:justify-between">
         <div className="flex flex-col justify-center p-6 text-center rounded lg:max-w-md xl:max-w-lg lg:text-left">
           <div>
-            <h1 className="text-2xl md: font-bold leadi md:text-4xl flex flex-col justify-center">
-              Join the world of{" "}
+            <h1 className="text-2xl md:text-4xl font-bold leading-tight flex flex-col justify-center">
+              <span className="">Join the world of</span>{" "}
               <span className="text-primaryColor">successful Investors</span>
             </h1>
             <p className="mt-6 mb-8 text-md md:text-lg md:mb-12">
