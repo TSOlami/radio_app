@@ -3,11 +3,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
 
 //Images
 import img from "../../public/logo.png";
 
-export default function header() {
+export default function Header() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check for token in localStorage or cookies
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setIsAuthenticated(!!token);
+  }, []);
+
   return (
     <div className="navbar">
       <div className="flex-1 m-2">
@@ -20,12 +29,20 @@ export default function header() {
       </div>
       <div className="flex-none m-2">
         <ul className="menu menu-horizontal px-1">
-          <Button size="sm" variant="ghost">
-            <Link href="/register">Sign Up</Link>
-          </Button>
-          <Button size="sm" variant="default">
-            <Link href="/login">Log In</Link>
-          </Button>
+          {!isAuthenticated ? (
+            <>
+              <Button size="sm" variant="ghost">
+                <Link href="/register">Sign Up</Link>
+              </Button>
+              <Button size="sm" variant="default">
+                <Link href="/login">Log In</Link>
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" variant="default">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          )}
         </ul>
       </div>
     </div>
