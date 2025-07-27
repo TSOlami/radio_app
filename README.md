@@ -1,123 +1,37 @@
-# Freeman Firms Unified Platform
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-A comprehensive investment platform with role-based access control for administrators, managers, and users.
+## Getting Started
 
-## 🏗️ Project Structure
+First, run the development server:
 
-This is a unified Next.js application that combines both the administrative interface and user interface into a single codebase with role-based routing and rendering.
-
-### Roles
-- **Super Admin (admin)**: Full system access and management
-- **Manager (manager)**: Administrative functions and user management  
-- **User (user)**: Standard user interface and investment features
-
-### Directory Structure
-
-```
-src/
-├── app/
-│   ├── (auth)/           # Authentication pages (login, register, etc.)
-│   ├── (pages)/
-│   │   ├── admin/        # Manager role pages
-│   │   ├── superadmin/   # Super admin role pages
-│   │   └── user/         # User role pages
-│   └── (root)/           # Public pages
-├── components/
-│   ├── admin/           # Manager-specific components
-│   ├── super-admin/     # Super admin components
-│   ├── user/            # User-specific components
-│   └── ui/              # Shared UI components
-├── api/                 # Backend API routes
-├── types/               # TypeScript type definitions
-└── styles/              # Global styles and constants
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Run the development server:
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-3. Build for production:
-```bash
-npm run build
-```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🔐 Authentication & Authorization
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-The application uses role-based access control with three distinct user roles:
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-- **Super Admin**: Access to `/superadmin/*` routes
-- **Manager**: Access to `/admin/*` routes  
-- **User**: Access to `/user/*` routes
+## Learn More
 
-Authentication is handled via API routes in `/api/auth/` and protected by `AuthGuard` components.
+To learn more about Next.js, take a look at the following resources:
 
-## 🌐 Backend API
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-The frontend connects to a separate Express.js backend deployed at:
-`https://freeman-assets.onrender.com`
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-API documentation is available in the `swagger.json` file.
+## Deploy on Vercel
 
-## 🎨 UI Framework
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Next.js 15**: React framework
-- **Tailwind CSS**: Utility-first CSS framework
-- **DaisyUI**: Component library
-- **React Icons**: Icon library
-- **Framer Motion**: Animation library
-
-## 📱 Features
-
-### Super Admin Features
-- User management
-- Investment plan management
-- Transaction monitoring
-- System settings
-
-### Manager Features  
-- User oversight
-- Transaction processing
-- Investment management
-- Account settings
-
-### User Features
-- Investment plans
-- Transactions
-- Referrals
-- Account management
-- Tasks and tiers
-
-## 🔧 Development
-
-### Code Quality
-- TypeScript for type safety
-- ESLint for code linting
-- Prettier for code formatting
-
-### File Organization
-- Modular component structure
-- Reusable UI components
-- Clean separation of concerns
-- Role-based component organization
-
-## 📄 License
-
-This project is proprietary software for Freeman Firms.
-
-## 🤝 Contributing
-
-Please ensure all code follows the established patterns and includes proper TypeScript types and error handling.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# afrimeet-web
