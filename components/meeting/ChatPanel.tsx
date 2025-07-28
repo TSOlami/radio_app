@@ -19,22 +19,15 @@ import {
 import { IoSend } from "react-icons/io5";
 import { useCall, useCallStateHooks, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
-
-interface ChatMessage {
-  id: string;
-  userId: string;
-  userName: string;
-  userImage?: string;
-  message: string;
-  timestamp: Date;
-}
+import { useChatPersistence, ChatMessage } from "../../hooks/useChatPersistence";
+import { formatMessageTime } from "../../utils/chatUtils";
 
 interface ChatPanelProps {
   onClose: () => void;
+  onMarkAsRead?: () => void;
 }
 
-const ChatPanel = ({ onClose }: ChatPanelProps) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +38,10 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
   const customData = useCallCustomData();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
+  
+  // Get call ID for persistence
+  const callId = call?.id;
+  const { messages, addMessage, markAsRead } = useChatPersistence(callId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -70,18 +67,20 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
           message: event.custom.message,
           timestamp: new Date(event.created_at || Date.now()),
         };
-        setMessages((prev) => {
-          const exists = prev.some(msg => msg.id === chatMessage.id);
-          if (exists) return prev;
-          return [...prev, chatMessage];
-        });
+        addMessage(chatMessage);
       }
     };
     const unsubscribe = call.on("custom", handleCustomEvent);
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [call]);
+  }, [call, addMessage]);
+
+  // Mark messages as read when chat panel is mounted (opened)
+  useEffect(() => {
+    markAsRead();
+    onMarkAsRead?.();
+  }, [markAsRead, onMarkAsRead]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !call || !user || isLoading) return;
@@ -105,7 +104,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
         message: messageText,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, chatMessage]);
+      addMessage(chatMessage);
       setNewMessage("");
     } catch (error) {
       setError("Failed to send message. Please try again.");
@@ -123,9 +122,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+
 
   return (
     <>
@@ -245,7 +242,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
                         ff="Nunito_sans_regular"
                         mt={2}
                       >
-                        {formatTime(message.timestamp)}
+                        {formatMessageTime(message.timestamp)}
                       </Text>
                     </Box>
                   </Group>
