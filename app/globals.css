@@ -32,6 +32,60 @@ body {
   }
 }
 
+/* Chat Panel Responsive Styles */
+.chat-panel {
+  border-left: 1px solid var(--dark_3);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Mobile styles (up to 768px) */
+@media (max-width: 768px) {
+  .chat-panel {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    border-left: none;
+  }
+}
+
+/* Tablet styles (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .chat-panel {
+    width: 350px;
+    height: 100%;
+  }
+}
+
+/* Desktop styles (1025px and above) */
+@media (min-width: 1025px) {
+  .chat-panel {
+    width: 380px;
+    height: 100%;
+  }
+}
+
+/* Main content area adjustments when chat is open */
+.chat-open {
+  max-width: calc(100% - 380px);
+}
+
+@media (max-width: 768px) {
+  .chat-open {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .chat-open {
+    max-width: calc(100% - 370px);
+  }
+}
+
 @font-face {
   font-family: "Nunito_sans_black";
   src: url("../public/fonts/NunitoSans_10pt-Black.ttf");
