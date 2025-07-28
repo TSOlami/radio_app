@@ -16,7 +16,6 @@ import {
 import { IoSend } from "react-icons/io5";
 import { useCallStateHooks, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
-import classes from "./chat.module.css";
 
 interface ChatMessage {
   id: string;
@@ -124,10 +123,22 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
   };
 
   return (
-    <Box className={classes.chatPanel}>
-      <Group justify="space-between" p="md" className={classes.chatHeader}>
+    <Box 
+      w={320} 
+      h="100%" 
+      bg="dark_colors.0" 
+      className="border-l border-solid flex flex-col"
+      style={{ borderColor: 'var(--dark_3)' }}
+    >
+      <Group 
+        justify="space-between" 
+        p="md" 
+        bg="dark_colors.2"
+        className="border-b border-solid"
+        style={{ borderColor: 'var(--dark_3)' }}
+      >
         <Text
-          size="lg"
+          fz={18}
           fw={600}
           c="light_colors.0"
           ff="Nunito_sans_semibold"
@@ -146,7 +157,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
         flex={1}
         p="md"
         viewportRef={viewport}
-        className={classes.messagesArea}
+        bg="dark_colors.1"
       >
         <Stack gap="sm">
           {messages.length === 0 ? (
@@ -163,11 +174,12 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
               <Paper
                 key={message.id}
                 p="sm"
-                className={
+                bg={message.userId === user?.id ? "other_colors.2" : "dark_colors.3"}
+                className={`${
                   message.userId === user?.id
-                    ? classes.ownMessage
-                    : classes.otherMessage
-                }
+                    ? "ml-auto rounded-xl rounded-br-sm"
+                    : "mr-auto rounded-xl rounded-bl-sm"
+                } max-w-[80%]`}
               >
                 <Group gap="xs" align="flex-start">
                   {message.userId !== user?.id && (
@@ -182,7 +194,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
                   <Box flex={1}>
                     {message.userId !== user?.id && (
                       <Text
-                        size="xs"
+                        fz={12}
                         c="light_colors.1"
                         ff="Nunito_sans_medium"
                         fw={500}
@@ -192,15 +204,15 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
                       </Text>
                     )}
                     <Text
-                      size="sm"
+                      fz={14}
                       c="light_colors.0"
                       ff="Nunito_sans_regular"
-                      style={{ wordBreak: "break-word" }}
+                      className="break-words"
                     >
                       {message.message}
                     </Text>
                     <Text
-                      size="xs"
+                      fz={11}
                       c="light_colors.2"
                       ff="Nunito_sans_regular"
                       mt={2}
@@ -215,7 +227,12 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
         </Stack>
       </ScrollArea>
 
-      <Box p="md" className={classes.messageInput}>
+      <Box 
+        p="md" 
+        bg="dark_colors.0"
+        className="border-t border-solid"
+        style={{ borderColor: 'var(--dark_3)' }}
+      >
         <Group gap="xs">
           <TextInput
             flex={1}
@@ -224,8 +241,17 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             size="md"
-            classNames={{
-              input: classes.textInput,
+            styles={{
+              input: {
+                backgroundColor: 'var(--dark_3)',
+                border: '1px solid var(--dark_3)',
+                borderRadius: '8px',
+                color: 'var(--light_0)',
+                fontFamily: 'Nunito_sans_regular',
+                '&:focus': {
+                  borderColor: 'var(--other_2)',
+                },
+              },
             }}
             maxLength={500}
           />
@@ -236,7 +262,15 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             variant="filled"
             bg="other_colors.2"
             color="light_colors.0"
-            className={classes.sendButton}
+            className="rounded-lg"
+            styles={{
+              root: {
+                '&:disabled': {
+                  backgroundColor: 'var(--dark_3)',
+                  color: 'var(--light_2)',
+                },
+              },
+            }}
           >
             <IoSend size={18} />
           </ActionIcon>

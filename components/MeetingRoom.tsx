@@ -55,7 +55,7 @@ const MeetingRoom = () => {
           </Box>
         )}
         {showChat && (
-          <Box className="h-screen">
+          <Box className="h-screen ml-2">
             <ChatPanel onClose={() => setShowChat(false)} />
           </Box>
         )}
