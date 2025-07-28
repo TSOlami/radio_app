@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Menu } from "@mantine/core";
+import { ActionIcon, Box, Menu, Badge } from "@mantine/core";
 import {
   PaginatedGridLayout,
   SpeakerLayout,
@@ -7,8 +7,9 @@ import {
   CallStatsButton,
   useCallStateHooks,
   CallingState,
+  useCall,
 } from "@stream-io/video-react-sdk";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import classes from "../app/(root)/meeting/meeting.module.css";
 import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
@@ -17,6 +18,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import EndCallButton from "./meeting/EndCallButton";
 import ChatPanel from "./meeting/ChatPanel";
 import InitialLoader from "./Loader";
+import { useChatNotifications } from "../hooks/useChatNotifications";
+import { clearChatMessages } from "../utils/chatUtils";
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -29,6 +32,15 @@ const MeetingRoom = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
   const router = useRouter();
+  const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
+  const call = useCall();
+
+  // Clear chat messages when call ends
+  useEffect(() => {
+    if (callingState === CallingState.LEFT && call?.id) {
+      clearChatMessages(call.id);
+    }
+  }, [callingState, call?.id]);
 
   if (callingState !== CallingState.JOINED) return <InitialLoader />;
 
@@ -58,7 +70,10 @@ const MeetingRoom = () => {
         )}
         
         {showChat && (
-          <ChatPanel onClose={() => setShowChat(false)} />
+          <ChatPanel 
+            onClose={() => setShowChat(false)} 
+            onMarkAsRead={markAsRead}
+          />
         )}
       </Box>
       
@@ -106,16 +121,39 @@ const MeetingRoom = () => {
         >
           <PiUsersThree size={20} />
         </ActionIcon>
-        <ActionIcon
-          title="Chat"
-          variant="transparent"
-          classNames={{
-            root: classes.action_bg,
-          }}
-          onClick={() => setShowChat((prev) => !prev)}
-        >
-          <IoChatbubbleEllipsesOutline size={20} />
-        </ActionIcon>
+        <Box pos="relative">
+          <ActionIcon
+            title="Chat"
+            variant="transparent"
+            classNames={{
+              root: classes.action_bg,
+            }}
+            onClick={() => setShowChat((prev) => !prev)}
+          >
+            <IoChatbubbleEllipsesOutline size={20} />
+          </ActionIcon>
+          {hasUnreadMessages && unreadCount > 0 && (
+            <Badge
+              size="xs"
+              variant="filled"
+              color="red"
+              pos="absolute"
+              top={-8}
+              right={-8}
+              style={{ 
+                minWidth: '18px', 
+                height: '18px', 
+                fontSize: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%'
+              }}
+            >
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </Badge>
+          )}
+        </Box>
         <CallStatsButton />
         {!isPersonalRoom && <EndCallButton />}
       </Box>
