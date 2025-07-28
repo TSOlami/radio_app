@@ -43,24 +43,26 @@ const MeetingRoom = () => {
         return <SpeakerLayout participantsBarPosition={"left"} />;
     }
   };
+
   return (
     <Box className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <Box className="relative flex size-full items-center justify-center">
-        <Box className={`flex size-full items-center ${showChat ? 'max-w-[680px]' : 'max-w-[1000px]'}`}>
+        <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
           <CallLayout />
         </Box>
+        
         {showParticipants && (
-          <Box className="h-screen ml-5">
+          <Box className="h-screen ml-5 hidden md:block">
             <CallParticipantsList onClose={() => setShowParticipants(false)} />
           </Box>
         )}
+        
         {showChat && (
-          <Box className="h-screen ml-2">
-            <ChatPanel onClose={() => setShowChat(false)} />
-          </Box>
+          <ChatPanel onClose={() => setShowChat(false)} />
         )}
       </Box>
-      <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3">
+      
+      <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
         <CallControls onLeave={() => router.replace("/")} />
         <Menu transitionProps={{ transition: "rotate-right", duration: 150 }}>
           <Menu.Target>
