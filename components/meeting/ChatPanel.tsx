@@ -38,7 +38,6 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<string>("");
   const { user } = useUser();
   const client = useStreamVideoClient();
   const call = useCall();
@@ -46,9 +45,6 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
   const customData = useCallCustomData();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-
-  // Get participants from the call
-  const participants = call?.state.participants || [];
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -60,28 +56,11 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
     }
   }, [messages]);
 
-  // Check connection status
-  useEffect(() => {
-    if (call) {
-      setConnectionStatus(`Connected to call: ${call.id}`);
-      console.log("Call connection status:", call.state);
-    } else {
-      setConnectionStatus("Not connected to call");
-    }
-  }, [call]);
 
   // Listen for custom events (chat messages)
   useEffect(() => {
-    if (!call) {
-      console.log("No call available for chat");
-      return;
-    }
-
-    console.log("Setting up chat event listener for call:", call.id);
-
+    if (!call) return;
     const handleCustomEvent = (event: any) => {
-      console.log("Received custom event:", event);
-      
       if (event.type === "chat_message" && event.custom) {
         const chatMessage: ChatMessage = {
           id: event.custom.messageId || crypto.randomUUID(),
@@ -91,54 +70,26 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
           message: event.custom.message,
           timestamp: new Date(event.created_at || Date.now()),
         };
-        
-        console.log("Processing chat message:", chatMessage);
-        
         setMessages((prev) => {
-          // Check if message already exists to prevent duplicates
           const exists = prev.some(msg => msg.id === chatMessage.id);
-          if (exists) {
-            console.log("Message already exists, skipping:", chatMessage.id);
-            return prev;
-          }
-          console.log("Adding new message to chat");
+          if (exists) return prev;
           return [...prev, chatMessage];
         });
       }
     };
-
-    // Subscribe to custom events
     const unsubscribe = call.on("custom", handleCustomEvent);
-
     return () => {
-      if (unsubscribe) {
-        console.log("Cleaning up chat event listener");
-        unsubscribe();
-      }
+      if (unsubscribe) unsubscribe();
     };
   }, [call]);
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !call || !user || isLoading) {
-      console.log("Cannot send message:", { 
-        hasMessage: !!newMessage.trim(), 
-        hasCall: !!call, 
-        hasUser: !!user, 
-        isLoading 
-      });
-      return;
-    }
-
+    if (!newMessage.trim() || !call || !user || isLoading) return;
     setIsLoading(true);
     setError(null);
-    
     try {
       const messageId = crypto.randomUUID();
       const messageText = newMessage.trim();
-      
-      console.log("Sending message:", { messageId, messageText, callId: call.id });
-      
-      // Send custom event to all participants
       await call.sendCustomEvent({
         type: "chat_message",
         custom: {
@@ -146,10 +97,6 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
           message: messageText,
         },
       });
-
-      console.log("Message sent successfully");
-
-      // Add message to local state immediately for better UX
       const chatMessage: ChatMessage = {
         id: messageId,
         userId: user.id,
@@ -158,59 +105,16 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
         message: messageText,
         timestamp: new Date(),
       };
-
       setMessages((prev) => [...prev, chatMessage]);
       setNewMessage("");
     } catch (error) {
-      console.error("Failed to send message:", error);
       setError("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const sendTestMessage = async () => {
-    if (!call || !user) {
-      setError("Not connected to call or user not available");
-      return;
-    }
 
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const messageId = crypto.randomUUID();
-      const testMessage = `Test message from ${user.username || user.firstName} at ${new Date().toLocaleTimeString()}`;
-      
-      console.log("Sending test message:", { messageId, testMessage, callId: call.id });
-      
-      await call.sendCustomEvent({
-        type: "chat_message",
-        custom: {
-          messageId,
-          message: testMessage,
-        },
-      });
-
-      console.log("Test message sent successfully");
-
-      const chatMessage: ChatMessage = {
-        id: messageId,
-        userId: user.id,
-        userName: user.username || user.firstName || user.id,
-        userImage: user.imageUrl,
-        message: testMessage,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, chatMessage]);
-    } catch (error) {
-      console.error("Failed to send test message:", error);
-      setError("Failed to send test message. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -225,17 +129,26 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
 
   return (
     <>
-      {/* Mobile overlay */}
-      <div className="md:hidden fixed inset-0 bg-black bg-opacity-35 z-[999]" onClick={onClose} />
-      
-      <Box 
-        className="chat-panel"
-        bg="dark_colors.0" 
-        style={{ borderColor: 'var(--dark_3)' }}
+      <Box
+        bg="dark_colors.0"
+        w={{ base: '98vw', md: 320 }}
+        h={{ base: '50vh', sm: '60vh', md: '70vh' }}
+        mih={{ base: 120, sm: 180, md: 250 }}
+        pos={{ base: 'fixed', md: 'static' }}
+        bottom={{ base: 0, md: undefined }}
+        left={{ base: 0, md: undefined }}
+        right={{ base: 0, md: undefined }}
+        className="border-l border-solid flex flex-col"
+        style={{
+          borderColor: 'var(--dark_3)',
+          ...(typeof window !== 'undefined' && window.innerWidth < 900
+            ? { borderRadius: '16px 16px 0 0', zIndex: 1000 }
+            : {}),
+        }}
       >
-        <Group 
-          justify="space-between" 
-          p="md" 
+        <Group
+          justify="space-between"
+          p="md"
           bg="dark_colors.2"
           className="border-b border-solid"
           style={{ borderColor: 'var(--dark_3)' }}
@@ -246,7 +159,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             c="light_colors.0"
             ff="Nunito_sans_semibold"
           >
-            Chat ({participants.length} participants)
+            Chat
           </Text>
           <CloseButton
             onClick={onClose}
@@ -255,14 +168,6 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             variant="transparent"
           />
         </Group>
-
-        {/* Connection status */}
-        <Box p="xs" bg="dark_colors.1" className="border-b border-solid" style={{ borderColor: 'var(--dark_3)' }}>
-          <Text fz={12} c="light_colors.2" ff="Nunito_sans_regular">
-            {connectionStatus}
-          </Text>
-        </Box>
-
         {error && (
           <Notification
             color="red"
@@ -273,29 +178,6 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             {error}
           </Notification>
         )}
-
-        {/* Test button for debugging */}
-        <Box p="xs" bg="dark_colors.1" className="border-b border-solid" style={{ borderColor: 'var(--dark_3)' }}>
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={sendTestMessage}
-            disabled={isLoading || !call}
-            fullWidth
-            styles={{
-              root: {
-                borderColor: 'var(--other_2)',
-                color: 'var(--other_2)',
-                '&:hover': {
-                  backgroundColor: 'var(--other_2)',
-                  color: 'var(--light_0)',
-                },
-              },
-            }}
-          >
-            Send Test Message
-          </Button>
-        </Box>
 
         <ScrollArea
           flex={1}
