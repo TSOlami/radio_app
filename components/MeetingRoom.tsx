@@ -20,6 +20,7 @@ import ChatPanel from "./meeting/ChatPanel";
 import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
+import { useChatPersistence } from "../hooks/useChatPersistence";
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -35,6 +36,30 @@ const MeetingRoom = () => {
   const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
   const call = useCall();
   const videoContainerRef = useRef<HTMLDivElement>(null);
+  const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
+
+  // Listen for custom chat events globally
+  useEffect(() => {
+    if (!call) return;
+    const handleCustomEvent = (event: any) => {
+      console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
+      if (event.type === "chat_message" && event.custom) {
+        const chatMessage = {
+          id: event.custom.messageId || crypto.randomUUID(),
+          userId: event.user.id,
+          userName: event.user.name || event.user.id,
+          userImage: event.user.image,
+          message: event.custom.message,
+          timestamp: new Date(event.created_at || Date.now()),
+        };
+        addMessage(chatMessage);
+      }
+    };
+    const unsubscribe = call.on("custom", handleCustomEvent);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [call, addMessage]);
 
   // Clear chat messages when call ends
   useEffect(() => {
@@ -104,7 +129,9 @@ const MeetingRoom = () => {
         {showChat && (
           <ChatPanel 
             onClose={() => setShowChat(false)} 
-            onMarkAsRead={markAsRead}
+            onMarkAsRead={markAsReadFromPersistence}
+            messages={messages}
+            addMessage={addMessage}
           />
         )}
       </Box>

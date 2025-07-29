@@ -25,9 +25,11 @@ import { formatMessageTime } from "../../utils/chatUtils";
 interface ChatPanelProps {
   onClose: () => void;
   onMarkAsRead?: () => void;
+  messages: ChatMessage[];
+  addMessage: (msg: ChatMessage) => void;
 }
 
-const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
+const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
   
   // Get call ID for persistence
   const callId = call?.id;
-  const { messages, addMessage, markAsRead } = useChatPersistence(callId);
+  // Remove: const { messages, addMessage, markAsRead } = useChatPersistence(callId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -54,34 +56,12 @@ const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
   }, [messages]);
 
 
-  // Listen for custom events (chat messages)
-  useEffect(() => {
-    if (!call) return;
-    const handleCustomEvent = (event: any) => {
-      console.log('[Chat Debug] Received custom event', { callId: call.id, event });
-      if (event.type === "chat_message" && event.custom) {
-        const chatMessage: ChatMessage = {
-          id: event.custom.messageId || crypto.randomUUID(),
-          userId: event.user.id,
-          userName: event.user.name || event.user.id,
-          userImage: event.user.image,
-          message: event.custom.message,
-          timestamp: new Date(event.created_at || Date.now()),
-        };
-        addMessage(chatMessage);
-      }
-    };
-    const unsubscribe = call.on("custom", handleCustomEvent);
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [call, addMessage]);
+  // Remove: useEffect for custom event listener
 
   // Mark messages as read when chat panel is mounted (opened)
   useEffect(() => {
-    markAsRead();
-    onMarkAsRead?.();
-  }, [markAsRead, onMarkAsRead]);
+    if (onMarkAsRead) onMarkAsRead();
+  }, [onMarkAsRead]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !call || !user || isLoading) return;
