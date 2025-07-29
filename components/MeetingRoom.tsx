@@ -9,7 +9,7 @@ import {
   CallingState,
   useCall,
 } from "@stream-io/video-react-sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "../app/(root)/meeting/meeting.module.css";
 import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
@@ -20,6 +20,7 @@ import ChatPanel from "./meeting/ChatPanel";
 import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
+import { useChatPersistence } from "../hooks/useChatPersistence";
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -34,6 +35,31 @@ const MeetingRoom = () => {
   const router = useRouter();
   const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
   const call = useCall();
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
+
+  // Listen for custom chat events globally
+  useEffect(() => {
+    if (!call) return;
+    const handleCustomEvent = (event: any) => {
+      console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
+      if (event.type === "chat_message" && event.custom) {
+        const chatMessage = {
+          id: event.custom.messageId || crypto.randomUUID(),
+          userId: event.user.id,
+          userName: event.user.name || event.user.id,
+          userImage: event.user.image,
+          message: event.custom.message,
+          timestamp: new Date(event.created_at || Date.now()),
+        };
+        addMessage(chatMessage);
+      }
+    };
+    const unsubscribe = call.on("custom", handleCustomEvent);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [call, addMessage]);
 
   // Clear chat messages when call ends
   useEffect(() => {
@@ -41,6 +67,37 @@ const MeetingRoom = () => {
       clearChatMessages(call.id);
     }
   }, [callingState, call?.id]);
+
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden' && window.innerWidth < 900) {
+        // Try to enter PiP mode
+        const video = videoContainerRef.current?.querySelector('video');
+        if (video && (video as any).requestPictureInPicture) {
+          try {
+            await (video as any).requestPictureInPicture();
+            console.log('[PiP Debug] Entered Picture-in-Picture mode');
+          } catch (err) {
+            console.error('[PiP Debug] Failed to enter PiP mode', err);
+          }
+        }
+      } else if (document.visibilityState === 'visible' && window.innerWidth < 900) {
+        // Try to exit PiP mode
+        if (document.pictureInPictureElement) {
+          try {
+            await (document as any).exitPictureInPicture();
+            console.log('[PiP Debug] Exited Picture-in-Picture mode');
+          } catch (err) {
+            console.error('[PiP Debug] Failed to exit PiP mode', err);
+          }
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   if (callingState !== CallingState.JOINED) return <InitialLoader />;
 
@@ -57,7 +114,7 @@ const MeetingRoom = () => {
   };
 
   return (
-    <Box className="relative h-screen w-full overflow-hidden pt-4 text-white">
+    <Box ref={videoContainerRef} className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
           <CallLayout />
@@ -72,7 +129,9 @@ const MeetingRoom = () => {
         {showChat && (
           <ChatPanel 
             onClose={() => setShowChat(false)} 
-            onMarkAsRead={markAsRead}
+            onMarkAsRead={markAsReadFromPersistence}
+            messages={messages}
+            addMessage={addMessage}
           />
         )}
       </Box>
