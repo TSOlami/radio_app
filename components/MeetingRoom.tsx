@@ -158,7 +158,6 @@ const MeetingRoom = () => {
             onClose={() => setShowChat(false)} 
             onMarkAsRead={markAsReadFromPersistence}
             messages={messages}
-            addMessage={addMessage}
           />
         )}
       </Box>

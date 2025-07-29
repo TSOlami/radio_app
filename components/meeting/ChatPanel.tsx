@@ -12,36 +12,28 @@ import {
   Avatar,
   Paper,
   CloseButton,
-  Notification,
-  Overlay,
-  Button,
+  Notification
 } from "@mantine/core";
 import { IoSend } from "react-icons/io5";
-import { useCall, useCallStateHooks, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { useCall } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
-import { useChatPersistence, ChatMessage } from "../../hooks/useChatPersistence";
+import { ChatMessage } from "../../hooks/useChatPersistence";
 import { formatMessageTime } from "../../utils/chatUtils";
 
 interface ChatPanelProps {
   onClose: () => void;
   onMarkAsRead?: () => void;
   messages: ChatMessage[];
-  addMessage: (msg: ChatMessage) => void;
 }
 
-const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage,  }: ChatPanelProps) => {
+const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
-  const client = useStreamVideoClient();
   const call = useCall();
-  const { useCallCustomData } = useCallStateHooks();
-  const customData = useCallCustomData();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-  const callId = call?.id;
-  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (viewport.current) {
@@ -70,10 +62,12 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage,  }: ChatPanelP
         messageId,
       });
       setNewMessage("");
+      inputRef.current?.focus();
     } catch (error) {
       setError("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
