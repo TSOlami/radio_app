@@ -9,12 +9,24 @@ import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark_colors, light_colors, other_colors } from "@/constants/colors";
 import { Notifications } from "@mantine/notifications";
+import PWAInitializer from "@/components/PWAInitializer";
 
 export const metadata: Metadata = {
   title: "Afrimeet",
-  description: "inmotion hub video calling app",
+  description: "inmotion hub video calling app with background call support",
   icons: {
     icon: "/logo.svg",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#161925",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Afrimeet",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
@@ -76,6 +88,7 @@ export default function RootLayout({
         <body suppressHydrationWarning={true}>
           <MantineProvider theme={theme}>
             <Notifications position="top-center" />
+            <PWAInitializer />
             {children}
           </MantineProvider>
         </body>
