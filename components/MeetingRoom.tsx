@@ -1,4 +1,5 @@
 import { ActionIcon, Box, Menu, Badge } from "@mantine/core";
+import { Transition } from '@mantine/core';
 import {
   PaginatedGridLayout,
   SpeakerLayout,
@@ -22,6 +23,7 @@ import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
 import { useChatPersistence } from "../hooks/useChatPersistence";
 import { usePictureInPicture } from "../hooks/usePictureInPicture";
+import type { ChatCustomEvent } from '../custom-type';
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -43,7 +45,7 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     if (!call) return;
-    const handleCustomEvent = (event: any) => {
+    const handleCustomEvent = (event: ChatCustomEvent) => {
       console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
       const payload = event.custom;
 
@@ -166,27 +168,30 @@ const MeetingRoom = () => {
           >
             <IoChatbubbleEllipsesOutline size={20} />
           </ActionIcon>
-          {hasUnreadMessages && unreadCount > 0 && (
-            <Badge
-              size="xs"
-              variant="filled"
-              color="red"
-              pos="absolute"
-              top={-8}
-              right={-8}
-              style={{ 
-                minWidth: '18px', 
-                height: '18px', 
-                fontSize: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%'
-              }}
-            >
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Badge>
-          )}
+          <Transition mounted={hasUnreadMessages && unreadCount > 0} transition="pop" duration={200} timingFunction="ease">
+            {(styles) => (
+              <Badge
+                size="xs"
+                variant="filled"
+                color="red"
+                pos="absolute"
+                top={-8}
+                right={-8}
+                style={{ 
+                  minWidth: '18px', 
+                  height: '18px', 
+                  fontSize: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  ...styles
+                }}
+              >
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Badge>
+            )}
+          </Transition>
         </Box>
         <CallStatsButton />
         {!isPersonalRoom && <EndCallButton />}
