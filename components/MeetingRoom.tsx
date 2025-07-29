@@ -22,6 +22,8 @@ import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
 import { useChatPersistence } from "../hooks/useChatPersistence";
+import { useBackgroundCall } from "../hooks/useBackgroundCall";
+import { useAudioSession } from "../hooks/useAudioSession";
 import type { ChatCustomEvent } from '../custom-type';
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
@@ -39,6 +41,10 @@ const MeetingRoom = () => {
   const call = useCall();
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
+
+  // Background call and audio session management
+  const { backgroundState, startBackgroundCall, stopBackgroundCall } = useBackgroundCall();
+  const { startBackgroundAudio, stopBackgroundAudio } = useAudioSession();
 
   useEffect(() => {
     if (!call) return;
@@ -75,6 +81,17 @@ const MeetingRoom = () => {
       clearChatMessages(call.id);
     }
   }, [callingState, call?.id]);
+
+  // Handle background call and audio when call state changes
+  useEffect(() => {
+    if (callingState === CallingState.JOINED) {
+      // Start background audio session when call is joined
+      startBackgroundAudio();
+    } else if (callingState === CallingState.LEFT || callingState === CallingState.REJECTED) {
+      // Stop background audio when call ends
+      stopBackgroundAudio();
+    }
+  }, [callingState, startBackgroundAudio, stopBackgroundAudio]);
 
   if (callingState !== CallingState.JOINED) return <InitialLoader />;
 
