@@ -29,7 +29,7 @@ interface ChatPanelProps {
   addMessage: (msg: ChatMessage) => void;
 }
 
-const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage }: ChatPanelProps) => {
+const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage,  }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,9 +40,9 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage }: ChatPanelPro
   const customData = useCallCustomData();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-  
   const callId = call?.id;
-  
+  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
+
   useEffect(() => {
     if (viewport.current) {
       viewport.current.scrollTo({
@@ -158,7 +158,7 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages, addMessage }: ChatPanelPro
                 No messages yet. Start the conversation!
               </Text>
             ) : (
-              messages.map((message) => (
+              messages.map((message, idx) => (
                 <Paper
                   key={message.id}
                   p="sm"

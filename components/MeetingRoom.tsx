@@ -1,4 +1,5 @@
 import { ActionIcon, Box, Menu, Badge } from "@mantine/core";
+import { Transition } from '@mantine/core';
 import {
   PaginatedGridLayout,
   SpeakerLayout,
@@ -14,6 +15,7 @@ import classes from "../app/(root)/meeting/meeting.module.css";
 import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { PiArrowDownRightBold } from "react-icons/pi";
 import { useRouter, useSearchParams } from "next/navigation";
 import EndCallButton from "./meeting/EndCallButton";
 import ChatPanel from "./meeting/ChatPanel";
@@ -22,6 +24,7 @@ import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
 import { useChatPersistence } from "../hooks/useChatPersistence";
 import { usePictureInPicture } from "../hooks/usePictureInPicture";
+import type { ChatCustomEvent } from '../custom-type';
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -37,29 +40,32 @@ const MeetingRoom = () => {
   const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
   const call = useCall();
   const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
 
   usePictureInPicture(videoContainerRef);
 
   useEffect(() => {
     if (!call) return;
-    const handleCustomEvent = (event: any) => {
-      console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
+    const handleCustomEvent = (event: ChatCustomEvent) => {
       const payload = event.custom;
 
       if (payload.type === "chat_message") {
         const chatMessage = {
-          id: payload.messageId,
-          message: payload.message,
+          id: payload.messageId || crypto.randomUUID(),
+          message: payload.message || "Unknown Message",
           userId: payload.userId || event.user?.id || "unknown",
           userName: payload.userName || event.user?.name || "Unknown User",
           userImage: payload.userImage || event.user?.image || "",
-          timestamp: new Date(payload.timestamp),
+          timestamp: new Date(payload.timestamp || Date.now()),
         };
-        console.log('[Chat Debug] [MeetingRoom] Received chat message', chatMessage);
         const exists = messages.some((msg) => msg.id === chatMessage.id);
         if (!exists) {
           addMessage(chatMessage);
+          if (showChat) {
+            markAsRead();
+            markAsReadFromPersistence?.();
+          }
         }
       }
     };
@@ -68,6 +74,34 @@ const MeetingRoom = () => {
       if (unsubscribe) unsubscribe();
     };
   }, [call, addMessage]);
+
+  useEffect(() => {
+    if (videoContainerRef.current) {
+      const vid = videoContainerRef.current.querySelector("video");
+      if (vid) setVideoEl(vid);
+    }
+  }, [callingState]);
+
+  useEffect(() => {
+  if (showChat && messages.length > 0) {
+    markAsRead();
+    markAsReadFromPersistence();
+  }
+}, [showChat, messages, markAsRead, markAsReadFromPersistence]);
+
+  const enterPip = async () => {
+    if (videoEl && document.pictureInPictureEnabled) {
+      try {
+        if (videoEl !== document.pictureInPictureElement) {
+          await videoEl.requestPictureInPicture();
+        } else {
+          await document.exitPictureInPicture();
+        }
+      } catch (err) {
+        console.warn("PiP failed", err);
+      }
+    }
+  };
 
   useEffect(() => {
     if (callingState === CallingState.LEFT && call?.id) {
@@ -90,6 +124,24 @@ const MeetingRoom = () => {
 
   return (
     <Box ref={videoContainerRef} className="relative h-screen w-full overflow-hidden pt-4 text-white">
+      <Box
+        style={{
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 1000,
+        }}
+        className={classes.action_bg}
+      >
+        <ActionIcon
+          onClick={enterPip}
+          title="Toggle Picture-in-Picture"
+          size="lg"
+          variant="transparent"
+        >
+          <PiArrowDownRightBold size={24} />
+        </ActionIcon>
+      </Box>
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
           <CallLayout />
@@ -162,31 +214,40 @@ const MeetingRoom = () => {
             classNames={{
               root: classes.action_bg,
             }}
-            onClick={() => setShowChat((prev) => !prev)}
+            onClick={() => {
+              setShowChat(prev => {
+                const willOpen = !prev;
+                if (willOpen) markAsRead();
+                return willOpen;
+              });
+            }}
           >
             <IoChatbubbleEllipsesOutline size={20} />
           </ActionIcon>
-          {hasUnreadMessages && unreadCount > 0 && (
-            <Badge
-              size="xs"
-              variant="filled"
-              color="red"
-              pos="absolute"
-              top={-8}
-              right={-8}
-              style={{ 
-                minWidth: '18px', 
-                height: '18px', 
-                fontSize: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%'
-              }}
-            >
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Badge>
-          )}
+          <Transition mounted={hasUnreadMessages && unreadCount > 0} transition="pop" duration={200} timingFunction="ease">
+            {(styles) => (
+              <Badge
+                size="xs"
+                variant="filled"
+                color="red"
+                pos="absolute"
+                top={-8}
+                right={-8}
+                style={{ 
+                  minWidth: '18px', 
+                  height: '18px', 
+                  fontSize: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  ...styles
+                }}
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </Badge>
+            )}
+          </Transition>
         </Box>
         <CallStatsButton />
         {!isPersonalRoom && <EndCallButton />}

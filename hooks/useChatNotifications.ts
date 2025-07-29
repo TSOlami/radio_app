@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useCall, useCallStateHooks } from '@stream-io/video-react-sdk';
 import { useUser } from '@clerk/nextjs';
+import type { ChatCustomEvent } from '../custom-type';
 
 export const useChatNotifications = () => {
   const [unreadCount, setUnreadCount] = useState(0);
@@ -11,13 +12,15 @@ export const useChatNotifications = () => {
   useEffect(() => {
     if (!call) return;
 
-    const handleCustomEvent = (event: any) => {      
+    const handleCustomEvent = (event: ChatCustomEvent) => {      
       const payload = event.custom;
 
       if (payload.type === "chat_message") {
         if (payload.userId !== user?.id) {
           setUnreadCount(prev => prev + 1);
           setHasUnreadMessages(true);
+          const audio = new Audio('/notification.mp3');
+          audio.play().catch(() => {});
         }
       }
     };
