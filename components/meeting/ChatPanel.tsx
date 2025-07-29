@@ -58,6 +58,7 @@ const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
   useEffect(() => {
     if (!call) return;
     const handleCustomEvent = (event: any) => {
+      console.log('[Chat Debug] Received custom event', { callId: call.id, event });
       if (event.type === "chat_message" && event.custom) {
         const chatMessage: ChatMessage = {
           id: event.custom.messageId || crypto.randomUUID(),
@@ -89,6 +90,7 @@ const ChatPanel = ({ onClose, onMarkAsRead }: ChatPanelProps) => {
     try {
       const messageId = crypto.randomUUID();
       const messageText = newMessage.trim();
+      console.log('[Chat Debug] Sending message', { callId: call.id, userId: user.id, messageId, messageText });
       await call.sendCustomEvent({
         type: "chat_message",
         custom: {

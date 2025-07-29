@@ -9,7 +9,7 @@ import {
   CallingState,
   useCall,
 } from "@stream-io/video-react-sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "../app/(root)/meeting/meeting.module.css";
 import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
@@ -34,6 +34,7 @@ const MeetingRoom = () => {
   const router = useRouter();
   const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
   const call = useCall();
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   // Clear chat messages when call ends
   useEffect(() => {
@@ -41,6 +42,37 @@ const MeetingRoom = () => {
       clearChatMessages(call.id);
     }
   }, [callingState, call?.id]);
+
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden' && window.innerWidth < 900) {
+        // Try to enter PiP mode
+        const video = videoContainerRef.current?.querySelector('video');
+        if (video && (video as any).requestPictureInPicture) {
+          try {
+            await (video as any).requestPictureInPicture();
+            console.log('[PiP Debug] Entered Picture-in-Picture mode');
+          } catch (err) {
+            console.error('[PiP Debug] Failed to enter PiP mode', err);
+          }
+        }
+      } else if (document.visibilityState === 'visible' && window.innerWidth < 900) {
+        // Try to exit PiP mode
+        if (document.pictureInPictureElement) {
+          try {
+            await (document as any).exitPictureInPicture();
+            console.log('[PiP Debug] Exited Picture-in-Picture mode');
+          } catch (err) {
+            console.error('[PiP Debug] Failed to exit PiP mode', err);
+          }
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   if (callingState !== CallingState.JOINED) return <InitialLoader />;
 
@@ -57,7 +89,7 @@ const MeetingRoom = () => {
   };
 
   return (
-    <Box className="relative h-screen w-full overflow-hidden pt-4 text-white">
+    <Box ref={videoContainerRef} className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
           <CallLayout />
