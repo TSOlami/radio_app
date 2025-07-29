@@ -19,6 +19,10 @@ export const useChatNotifications = () => {
         if (payload.userId !== user?.id) {
           setUnreadCount(prev => prev + 1);
           setHasUnreadMessages(true);
+<<<<<<< HEAD
+=======
+          // Play sound notification
+>>>>>>> 9911b4d24a774def55b72635fcadb62f08c101e0
           const audio = new Audio('/notification.mp3');
           audio.play().catch(() => {});
         }
