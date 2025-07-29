@@ -15,7 +15,10 @@ export default function useGetCallById(id: string | string[]) {
           id,
         },
       });
-      if (calls.length > 0) setCall(calls[0]);
+      if (calls.length > 0) {
+        await calls[0].join();
+        setCall(calls[0]);
+      }
       setIsCallLoading(false);
     };
     loadCall();
