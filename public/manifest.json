@@ -1,55 +1,33 @@
 {
   "name": "Afrimeet",
   "short_name": "Afrimeet",
-  "description": "Video conferencing app with background call support",
   "theme_color": "#ffffff",
   "background_color": "#161925",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
-  "categories": ["business", "productivity", "social"],
-  "lang": "en",
-  "dir": "ltr",
-  "background": {
-    "service_worker": "/sw.js",
-    "type": "module"
-  },
-  "permissions": [
-    "background-sync",
-    "notifications",
-    "audio-capture",
-    "video-capture"
-  ],
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/icon-256x256.png",
       "sizes": "256x256",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/icon-384x384.png",
       "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
-  "splash_pages": null,
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+  "splash_pages": null
 }
