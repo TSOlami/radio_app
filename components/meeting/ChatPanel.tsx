@@ -33,15 +33,7 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
   const { user } = useUser();
   const call = useCall();
   const viewport = useRef<HTMLDivElement>(null);
-<<<<<<< HEAD
   const inputRef = useRef<HTMLInputElement>(null);
-=======
-  
-  const callId = call?.id;
-  
-  const [isSomeoneTyping, setIsSomeoneTyping] = useState(false);
-  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
->>>>>>> 9911b4d24a774def55b72635fcadb62f08c101e0
 
   useEffect(() => {
     if (viewport.current) {
@@ -55,22 +47,6 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
   useEffect(() => {
     if (onMarkAsRead) onMarkAsRead();
   }, [onMarkAsRead]);
-
-  // Typing indicator effect (placeholder logic)
-  useEffect(() => {
-    // TODO: Replace with real event from backend
-    const typingTimeout = setTimeout(() => setIsSomeoneTyping(false), 2000);
-    // Simulate someone typing for demo
-    setIsSomeoneTyping(true);
-    return () => clearTimeout(typingTimeout);
-  }, [messages]);
-
-  // Read receipt effect (placeholder logic)
-  useEffect(() => {
-    if (messages.length > 0) {
-      setLastReadMessageId(messages[messages.length - 1].id);
-    }
-  }, [messages]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !call || !user || isLoading) return;
@@ -225,21 +201,11 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
                         mt={2}
                       >
                         {formatMessageTime(message.timestamp)}
-                        {/* Read receipt for last message (placeholder) */}
-                        {idx === messages.length - 1 && message.userId === user?.id && lastReadMessageId === message.id && (
-                          <span style={{ marginLeft: 8, color: '#4caf50', fontSize: 12 }}>✔ Seen</span>
-                        )}
                       </Text>
                     </Box>
                   </Group>
                 </Paper>
               ))
-            )}
-            {/* Typing indicator (placeholder) */}
-            {isSomeoneTyping && (
-              <Text fz={13} c="light_colors.2" ff="Nunito_sans_regular" mt={2}>
-                Someone is typing...
-              </Text>
             )}
           </Stack>
         </ScrollArea>

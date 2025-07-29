@@ -48,10 +48,6 @@ const MeetingRoom = () => {
   useEffect(() => {
     if (!call) return;
     const handleCustomEvent = (event: ChatCustomEvent) => {
-<<<<<<< HEAD
-=======
-      console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
->>>>>>> 9911b4d24a774def55b72635fcadb62f08c101e0
       const payload = event.custom;
 
       if (payload.type === "chat_message") {
@@ -247,11 +243,7 @@ const MeetingRoom = () => {
                   ...styles
                 }}
               >
-<<<<<<< HEAD
                 {unreadCount > 9 ? '9+' : unreadCount}
-=======
-                {unreadCount > 99 ? '99+' : unreadCount}
->>>>>>> 9911b4d24a774def55b72635fcadb62f08c101e0
               </Badge>
             )}
           </Transition>
