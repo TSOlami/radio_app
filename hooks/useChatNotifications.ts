@@ -8,14 +8,14 @@ export const useChatNotifications = () => {
   const call = useCall();
   const { user } = useUser();
 
-  // Listen for incoming chat messages
   useEffect(() => {
     if (!call) return;
 
-    const handleCustomEvent = (event: any) => {
-      if (event.type === "chat_message" && event.custom) {
-        // Only increment unread count if the message is from another user
-        if (event.user.id !== user?.id) {
+    const handleCustomEvent = (event: any) => {      
+      const payload = event.custom;
+
+      if (payload.type === "chat_message") {
+        if (payload.userId !== user?.id) {
           setUnreadCount(prev => prev + 1);
           setHasUnreadMessages(true);
         }

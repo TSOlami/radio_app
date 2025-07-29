@@ -9,7 +9,7 @@ import {
   CallingState,
   useCall,
 } from "@stream-io/video-react-sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "../app/(root)/meeting/meeting.module.css";
 import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
@@ -20,6 +20,8 @@ import ChatPanel from "./meeting/ChatPanel";
 import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
+import { useChatPersistence } from "../hooks/useChatPersistence";
+import { usePictureInPicture } from "../hooks/usePictureInPicture";
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
 
@@ -34,8 +36,39 @@ const MeetingRoom = () => {
   const router = useRouter();
   const { unreadCount, hasUnreadMessages, markAsRead } = useChatNotifications();
   const call = useCall();
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
 
-  // Clear chat messages when call ends
+  usePictureInPicture(videoContainerRef);
+
+  useEffect(() => {
+    if (!call) return;
+    const handleCustomEvent = (event: any) => {
+      console.log('[Chat Debug] [MeetingRoom] Received custom event', { callId: call.id, event });
+      const payload = event.custom;
+
+      if (payload.type === "chat_message") {
+        const chatMessage = {
+          id: payload.messageId,
+          message: payload.message,
+          userId: payload.userId || event.user?.id || "unknown",
+          userName: payload.userName || event.user?.name || "Unknown User",
+          userImage: payload.userImage || event.user?.image || "",
+          timestamp: new Date(payload.timestamp),
+        };
+        console.log('[Chat Debug] [MeetingRoom] Received chat message', chatMessage);
+        const exists = messages.some((msg) => msg.id === chatMessage.id);
+        if (!exists) {
+          addMessage(chatMessage);
+        }
+      }
+    };
+    const unsubscribe = call.on("custom", handleCustomEvent);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [call, addMessage]);
+
   useEffect(() => {
     if (callingState === CallingState.LEFT && call?.id) {
       clearChatMessages(call.id);
@@ -50,33 +83,34 @@ const MeetingRoom = () => {
         return <PaginatedGridLayout />;
       case "speaker-left":
         return <SpeakerLayout participantsBarPosition={"right"} />;
-
       default:
         return <SpeakerLayout participantsBarPosition={"left"} />;
     }
   };
 
   return (
-    <Box className="relative h-screen w-full overflow-hidden pt-4 text-white">
+    <Box ref={videoContainerRef} className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
           <CallLayout />
         </Box>
-        
+
         {showParticipants && (
           <Box className="h-screen ml-5 hidden md:block">
             <CallParticipantsList onClose={() => setShowParticipants(false)} />
           </Box>
         )}
-        
+
         {showChat && (
           <ChatPanel 
             onClose={() => setShowChat(false)} 
-            onMarkAsRead={markAsRead}
+            onMarkAsRead={markAsReadFromPersistence}
+            messages={messages}
+            addMessage={addMessage}
           />
         )}
       </Box>
-      
+
       <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
         <CallControls onLeave={() => router.replace("/")} />
         <Menu transitionProps={{ transition: "rotate-right", duration: 150 }}>
