@@ -1,4 +1,5 @@
 import { rem } from "@mantine/core";
+import { CustomIconsProps } from "@/custom-type";
 
 export default function SuccessIcon({
   size,

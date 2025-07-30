@@ -1,5 +1,5 @@
-import { CreateIcon } from "@/components/icons/Create";
-import { CopyIcon } from "@/components/icons/Copy";
+import CreateIcon from "@/components/icons/Create";
+import CopyIcon from "@/components/icons/Copy";
 import UserPlusIcon from "@/components/icons/UserPlus";
 import EventDateIcon from "@/components/icons/EventDate";
 import VideoIcon from "@/components/icons/Video";

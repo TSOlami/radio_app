@@ -1,5 +1,5 @@
 import { Flex, Button, CopyButton } from "@mantine/core";
-import { CopyIcon } from "../icons/Copy";
+import CopyIcon from "../icons/Copy";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import useGetCallById from "@/hooks/useGetCallById";
 import { useRouter } from "next/navigation";

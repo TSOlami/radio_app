@@ -1,7 +1,7 @@
 import { Modal, Button, Stack, Group, Title, CopyButton } from "@mantine/core";
 import classes from "./modal.module.css";
 import SuccessIcon from "../icons/Success";
-import { CopyIcon } from "../icons/Copy";
+import CopyIcon from "../icons/Copy";
 import { Call } from "@stream-io/video-react-sdk";
 
 const CreateSuccess = ({

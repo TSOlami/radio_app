@@ -1,6 +1,7 @@
 import { rem } from "@mantine/core";
+import { CustomIconsProps } from "@/custom-type";
 
-export function NextEventIcon({ size, style, ...others }: CustomIconsProps) {
+export default function NextEventIcon({ size, style, ...others }: CustomIconsProps) {
   return (
     <svg
       width="20"

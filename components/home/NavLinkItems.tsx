@@ -1,13 +1,13 @@
 import { Box, NavLink } from "@mantine/core";
 
 import classes from "./home.module.css";
-import { HomeIcon } from "../icons/Home";
-import { NextEventIcon } from "../icons/NextEvent";
+import HomeIcon from "../icons/Home";
+import NextEventIcon from "../icons/NextEvent";
 import CreateIcon from "../icons/Create";
 import VideoIcon from "../icons/Video";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PrevEventIcon } from "../icons/PrevEvent";
+import PrevEventIcon from "../icons/PrevEvent";
 
 const data = [
   {

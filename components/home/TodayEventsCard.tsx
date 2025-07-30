@@ -9,9 +9,9 @@ import {
   Title,
   CopyButton,
 } from "@mantine/core";
-import { NextEventIcon } from "../icons/NextEvent";
+import NextEventIcon from "../icons/NextEvent";
 import GroupAvatar from "./GroupAvatar";
-import { CopyIcon } from "../icons/Copy";
+import CopyIcon from "../icons/Copy";
 import { Call } from "@stream-io/video-react-sdk";
 import Link from "next/link";
 

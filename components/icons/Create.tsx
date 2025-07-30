@@ -1,7 +1,7 @@
 import { rem } from "@mantine/core";
 import { CustomIconsProps } from "@/custom-type";
 
-export function CreateIcon({
+export default function CreateIcon({
   size,
   style,
   ...others

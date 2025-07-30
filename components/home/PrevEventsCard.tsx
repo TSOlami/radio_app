@@ -2,7 +2,7 @@
 
 import { Box, Group, Text, Title } from "@mantine/core";
 import GroupAvatar from "./GroupAvatar";
-import { PrevEventIcon } from "../icons/PrevEvent";
+import PrevEventIcon from "../icons/PrevEvent";
 import { Call } from "@stream-io/video-react-sdk";
 
 const PrevEventsCard = ({ meeting }: { meeting: Call }) => {

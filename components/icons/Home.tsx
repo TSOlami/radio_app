@@ -1,6 +1,7 @@
 import { rem } from "@mantine/core";
+import { CustomIconsProps } from "@/custom-type";
 
-export function HomeIcon({ size, style, ...others }: CustomIconsProps) {
+export default function HomeIcon({ size, style, ...others }: CustomIconsProps) {
   return (
     <svg
       width="24"
