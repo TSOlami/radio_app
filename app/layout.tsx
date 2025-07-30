@@ -9,7 +9,7 @@ import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark_colors, light_colors, other_colors } from "@/constants/colors";
 import { Notifications } from "@mantine/notifications";
-import { PiPProvider } from "@/hooks/usePictureInPicture";
+
 
 export const metadata: Metadata = {
   title: "Afrimeet",
@@ -77,9 +77,7 @@ export default function RootLayout({
         <body suppressHydrationWarning={true}>
           <MantineProvider theme={theme}>
             <Notifications position="top-center" />
-            <PiPProvider>
-              {children}
-            </PiPProvider>
+            {children}
           </MantineProvider>
         </body>
       </ClerkProvider>
