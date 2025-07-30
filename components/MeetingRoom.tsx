@@ -17,6 +17,7 @@ import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { MdPictureInPicture } from "react-icons/md";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import EndCallButton from "./meeting/EndCallButton";
 import ChatPanel from "./meeting/ChatPanel";
@@ -24,7 +25,7 @@ import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
 import { useChatPersistence } from "../hooks/useChatPersistence";
-import { usePictureInPicture } from "../hooks/usePictureInPicture";
+
 import type { ChatCustomEvent } from '../custom-type';
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
@@ -43,8 +44,7 @@ const MeetingRoom = () => {
   const call = useCall();
   const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
   
-  // Picture-in-Picture functionality
-  const { pipWindow, handlePictureInPicture, closePictureInPicture, isSupported } = usePictureInPicture();
+
 
   useEffect(() => {
     if (!call) return;
@@ -113,64 +113,15 @@ const MeetingRoom = () => {
         }}
         className={classes.action_bg}
       >
-        {/* PiP Button - only show if supported */}
-        {isSupported && (
-          <Button
-            onClick={handlePictureInPicture}
-            title="Picture-in-Picture"
-            size="sm"
-            variant="transparent"
-            color="white"
-            style={{ marginBottom: "0.5rem" }}
-          >
-            <MdPictureInPicture size={20} />
-          </Button>
-        )}
+
       </Box>
       
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
-          {pipWindow ? (
-            <>
-              {/* Render call UI in PiP window via portal */}
-              {createPortal(
-                <Box className="h-screen w-full overflow-hidden pt-4 text-white">
-                  <CallLayout />
-                  <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
-                    <CallControls onLeave={() => router.replace("/")} />
-                    <Button
-                      onClick={closePictureInPicture}
-                      size="sm"
-                      variant="filled"
-                      color="red"
-                    >
-                      Exit PiP
-                    </Button>
-                  </Box>
-                </Box>,
-                pipWindow.document.body,
-              )}
-              {/* Keep audio in parent window but hide UI */}
-              <Box style={{ display: 'none' }}>
-                <CallLayout />
-              </Box>
-              {/* Exit PiP button in parent window */}
-              <Box className="fixed top-4 left-4 z-50">
-                <Button
-                  onClick={closePictureInPicture}
-                  size="lg"
-                  variant="filled"
-                  color="red"
-                >
-                  Exit Picture-in-Picture
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <>
-              <CallLayout />
-            </>
-          )}
+                    {/* Always render the main call layout */}
+          <CallLayout />
+          
+
         </Box>
 
         {showParticipants && (
@@ -189,8 +140,7 @@ const MeetingRoom = () => {
         )}
       </Box>
 
-      {!pipWindow && (
-        <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
+      <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
           <CallControls onLeave={() => router.replace("/")} />
           <Menu transitionProps={{ transition: "rotate-right", duration: 150 }}>
             <Menu.Target>
@@ -279,7 +229,6 @@ const MeetingRoom = () => {
           <CallStatsButton />
           {!isPersonalRoom && <EndCallButton />}
         </Box>
-      )}
     </Box>
   );
 };

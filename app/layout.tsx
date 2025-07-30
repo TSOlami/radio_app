@@ -10,6 +10,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark_colors, light_colors, other_colors } from "@/constants/colors";
 import { Notifications } from "@mantine/notifications";
 
+
 export const metadata: Metadata = {
   title: "Afrimeet",
   description: "inmotion hub video calling app",
