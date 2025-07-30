@@ -25,7 +25,8 @@ import InitialLoader from "./Loader";
 import { useChatNotifications } from "../hooks/useChatNotifications";
 import { clearChatMessages } from "../utils/chatUtils";
 import { useChatPersistence } from "../hooks/useChatPersistence";
-import { usePictureInPicture } from "../hooks/usePictureInPicture";
+import { usePiPWindow } from "../hooks/usePictureInPicture";
+import PiPWindow from "./PiPWindow";
 import type { ChatCustomEvent } from '../custom-type';
 
 type CallLayoutType = "grid" | "speaker-right" | "speaker-left";
@@ -45,7 +46,7 @@ const MeetingRoom = () => {
   const { messages, addMessage, markAsRead: markAsReadFromPersistence } = useChatPersistence(call?.id);
   
   // Picture-in-Picture functionality
-  const { pipWindow, handlePictureInPicture, closePictureInPicture, isSupported } = usePictureInPicture();
+  const { pipWindow, requestPipWindow, closePipWindow, isSupported } = usePiPWindow();
 
   useEffect(() => {
     if (!call) return;
@@ -117,7 +118,7 @@ const MeetingRoom = () => {
         {/* PiP Button - only show if supported */}
         {isSupported && (
           <Button
-            onClick={handlePictureInPicture}
+            onClick={() => requestPipWindow(500, 500)}
             title="Picture-in-Picture"
             size="sm"
             variant="transparent"
@@ -135,29 +136,31 @@ const MeetingRoom = () => {
           <CallLayout />
           
           {/* PiP window overlay */}
-          {pipWindow && createPortal(
-            <Box className="h-screen w-full overflow-hidden pt-4 text-white">
-              <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
-                <CallControls onLeave={() => router.replace("/")} />
-                <Button
-                  onClick={closePictureInPicture}
-                  size="sm"
-                  variant="filled"
-                  color="red"
-                  title="Exit Picture-in-Picture"
-                >
-                  <IoClose size={16} />
-                </Button>
+          {pipWindow && (
+            <PiPWindow pipWindow={pipWindow}>
+              <Box className="h-screen w-full overflow-hidden pt-4 text-white">
+                <CallLayout />
+                <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
+                  <CallControls onLeave={() => router.replace("/")} />
+                  <Button
+                    onClick={closePipWindow}
+                    size="sm"
+                    variant="filled"
+                    color="red"
+                    title="Exit Picture-in-Picture"
+                  >
+                    <IoClose size={16} />
+                  </Button>
+                </Box>
               </Box>
-            </Box>,
-            pipWindow.document.body,
+            </PiPWindow>
           )}
           
           {/* Exit PiP button in parent window */}
           {pipWindow && (
             <Box className="fixed top-4 left-4 z-50">
               <Button
-                onClick={closePictureInPicture}
+                onClick={closePipWindow}
                 size="lg"
                 variant="filled"
                 color="red"

@@ -1,55 +1,103 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, createContext, useContext, useMemo, ReactNode } from 'react';
 
-export const usePictureInPicture = () => {
+type PiPContextType = {
+  isSupported: boolean;
+  pipWindow: Window | null;
+  requestPipWindow: (width: number, height: number) => Promise<void>;
+  closePipWindow: () => void;
+};
+
+const PiPContext = createContext<PiPContextType | undefined>(undefined);
+
+type PiPProviderProps = {
+  children: ReactNode;
+};
+
+export function PiPProvider({ children }: PiPProviderProps) {
+  // Detect if the feature is available.
+  const isSupported = "documentPictureInPicture" in window;
+
+  // Expose pipWindow that is currently active
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
 
-  const handlePictureInPicture = useCallback(async () => {
-    if ("documentPictureInPicture" in window) {
-      try {
-        const pw = await (window as any).documentPictureInPicture.requestWindow();
-        
-        // Copy all stylesheets from parent window to PiP window
-        window.document.head
-          .querySelectorAll('link[rel="stylesheet"], style')
-          .forEach((node) => {
-            pw.document.head.appendChild(node.cloneNode(true));
-          });
-        
-        // Handle PiP window close event
-        pw.addEventListener("pagehide", () => setPipWindow(null));
-        setPipWindow(pw);
-        
-        return pw;
-      } catch (error) {
-        console.error("Failed to open Picture-in-Picture:", error);
-        return null;
-      }
-    } else {
-      console.warn("Document Picture-in-Picture API is not supported in this browser");
-      return null;
-    }
-  }, []);
-
-  const closePictureInPicture = useCallback(() => {
-    if (pipWindow) {
+  // Close pipWindow programmatically
+  const closePipWindow = useCallback(() => {
+    if (pipWindow != null) {
       pipWindow.close();
       setPipWindow(null);
     }
   }, [pipWindow]);
 
-  // Clean up PiP window when component unmounts
-  useEffect(() => {
-    return () => {
-      if (pipWindow) {
-        pipWindow.close();
+  // Open new pipWindow
+  const requestPipWindow = useCallback(
+    async (width: number, height: number) => {
+      // We don't want to allow multiple requests.
+      if (pipWindow != null) {
+        return;
       }
-    };
-  }, [pipWindow]);
 
-  return {
-    pipWindow,
-    handlePictureInPicture,
-    closePictureInPicture,
-    isSupported: "documentPictureInPicture" in window,
-  };
-};
+      const pip = await window.documentPictureInPicture.requestWindow({
+        width,
+        height,
+      });
+
+      // Detect when window is closed by user
+      pip.addEventListener("pagehide", () => {
+        setPipWindow(null);
+      });
+
+      // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
+      // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
+      [...document.styleSheets].forEach((styleSheet) => {
+        try {
+          const cssRules = [...styleSheet.cssRules]
+            .map((rule) => rule.cssText)
+            .join("");
+          const style = document.createElement("style");
+
+          style.textContent = cssRules;
+          pip.document.head.appendChild(style);
+        } catch (e) {
+          const link = document.createElement("link");
+          if (styleSheet.href == null) {
+            return;
+          }
+
+          link.rel = "stylesheet";
+          link.type = styleSheet.type;
+          link.media = styleSheet.media.toString();
+          link.href = styleSheet.href;
+          pip.document.head.appendChild(link);
+        }
+      });
+
+      setPipWindow(pip);
+    },
+    [pipWindow]
+  );
+
+  const value = useMemo(() => {
+    return {
+      isSupported,
+      pipWindow,
+      requestPipWindow,
+      closePipWindow,
+    };
+  }, [closePipWindow, isSupported, pipWindow, requestPipWindow]);
+
+  return <PiPContext.Provider value={value}>{children}</PiPContext.Provider>;
+}
+
+// Helper hook to consume the context
+export function usePiPWindow(): PiPContextType {
+  const context = useContext(PiPContext);
+
+  if (context === undefined) {
+    throw new Error("usePiPWindow must be used within a PiPContext");
+  }
+
+  return context;
+}
+
+// Legacy hook for backward compatibility
+export const usePictureInPicture = usePiPWindow;
