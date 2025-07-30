@@ -1,10 +1,11 @@
-import { Box, Text } from "@mantine/core";
+import { Card, Text, Group, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import InstantMeeting from "../modal/InstantMeeting";
 import ScheduleMeeting from "../modal/CreateMeeting";
 import JoinMeeting from "../modal/JoinMeeting";
+import { MeetingTypesProps } from "@/custom-type";
 
 const MeetingTypeCard = ({ data }: { data: MeetingTypesProps }) => {
   const [opened, { open, close }] = useDisclosure(false);

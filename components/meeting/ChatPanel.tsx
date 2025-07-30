@@ -18,22 +18,23 @@ import { IoSend } from "react-icons/io5";
 import { useCall } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
 import { ChatMessage } from "../../hooks/useChatPersistence";
+import { useChatInput } from "../../hooks/useChatInput";
 import { formatMessageTime } from "../../utils/chatUtils";
 
 interface ChatPanelProps {
   onClose: () => void;
   onMarkAsRead?: () => void;
   messages: ChatMessage[];
+  isOpen: boolean;
 }
 
-const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
-  const [newMessage, setNewMessage] = useState("");
+const ChatPanel = ({ onClose, onMarkAsRead, messages, isOpen }: ChatPanelProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
   const call = useCall();
   const viewport = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { inputValue, inputRef, clearInput, updateInput, focusInput } = useChatInput(isOpen);
 
   useEffect(() => {
     if (viewport.current) {
@@ -49,29 +50,29 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
   }, [onMarkAsRead]);
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !call || !user || isLoading) return;
+    if (!inputValue.trim() || !call || !user || isLoading) return;
     setIsLoading(true);
     setError(null);
     try {
       const messageId = crypto.randomUUID();
-      const messageText = newMessage.trim();
+      const messageText = inputValue.trim();
       console.log('[Chat Debug] Sending message', { callId: call.id, userId: user.id, messageId, messageText });
       await call.sendCustomEvent({
         type: "chat_message",
         message: messageText,
         messageId,
       });
-      setNewMessage("");
-      inputRef.current?.focus();
+      clearInput();
+      // Focus input after sending message
+      setTimeout(() => {
+        focusInput();
+      }, 50);
     } catch (error) {
       setError("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
-      inputRef.current?.focus();
     }
   };
-
-
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -79,8 +80,6 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
       sendMessage();
     }
   };
-
-
 
   return (
     <>
@@ -219,11 +218,10 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
           <Group gap="xs">
             <TextInput
               ref={inputRef}
-              autoFocus
               flex={1}
               placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              value={inputValue}
+              onChange={(e) => updateInput(e.target.value)}
               onKeyPress={handleKeyPress}
               size="md"
               disabled={isLoading}
@@ -246,7 +244,7 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
             />
             <ActionIcon
               onClick={sendMessage}
-              disabled={!newMessage.trim() || isLoading}
+              disabled={!inputValue.trim() || isLoading}
               size="lg"
               variant="filled"
               bg="other_colors.2"

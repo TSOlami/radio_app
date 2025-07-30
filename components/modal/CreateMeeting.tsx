@@ -7,6 +7,7 @@ import CreateSuccess from "./CreateSuccess";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useState } from "react";
+import { ScheduleMeetingProps } from "@/custom-type";
 
 const ScheduleMeeting = ({
   show,
