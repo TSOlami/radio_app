@@ -36,10 +36,12 @@ export function PiPProvider({ children }: PiPProviderProps) {
         return;
       }
 
-      const pip = await window.documentPictureInPicture.requestWindow({
-        width,
-        height,
-      });
+      if (!isSupported || !window.documentPictureInPicture) {
+        console.warn("Document Picture-in-Picture API is not supported");
+        return;
+      }
+
+      const pip = await window.documentPictureInPicture.requestWindow();
 
       // Detect when window is closed by user
       pip.addEventListener("pagehide", () => {
@@ -48,9 +50,9 @@ export function PiPProvider({ children }: PiPProviderProps) {
 
       // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
       // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
-      [...document.styleSheets].forEach((styleSheet) => {
+      Array.from(document.styleSheets).forEach((styleSheet) => {
         try {
-          const cssRules = [...styleSheet.cssRules]
+          const cssRules = Array.from(styleSheet.cssRules)
             .map((rule) => rule.cssText)
             .join("");
           const style = document.createElement("style");
@@ -73,17 +75,15 @@ export function PiPProvider({ children }: PiPProviderProps) {
 
       setPipWindow(pip);
     },
-    [pipWindow]
+    [pipWindow, isSupported]
   );
 
-  const value = useMemo(() => {
-    return {
-      isSupported,
-      pipWindow,
-      requestPipWindow,
-      closePipWindow,
-    };
-  }, [closePipWindow, isSupported, pipWindow, requestPipWindow]);
+  const value = useMemo(() => ({
+    isSupported,
+    pipWindow,
+    requestPipWindow,
+    closePipWindow,
+  }), [closePipWindow, isSupported, pipWindow, requestPipWindow]);
 
   return <PiPContext.Provider value={value}>{children}</PiPContext.Provider>;
 }
