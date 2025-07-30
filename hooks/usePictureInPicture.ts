@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export const usePictureInPicture = () => {
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
+  const mediaSessionHandlerRef = useRef<(() => void) | null>(null);
 
   const handlePictureInPicture = useCallback(async () => {
     if ("documentPictureInPicture" in window) {
@@ -36,6 +37,34 @@ export const usePictureInPicture = () => {
       setPipWindow(null);
     }
   }, [pipWindow]);
+
+  // Set up Media Session API for automatic PiP when leaving tab
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      // Create a stable handler function
+      const handler = async () => {
+        if (!pipWindow) {
+          await handlePictureInPicture();
+        }
+      };
+      
+      mediaSessionHandlerRef.current = handler;
+      
+      // Set up the Media Session action handler
+      navigator.mediaSession.setActionHandler(
+        "enterpictureinpicture" as any,
+        handler,
+      );
+      
+      return () => {
+        // Clean up the Media Session handler
+        if (mediaSessionHandlerRef.current) {
+          navigator.mediaSession.setActionHandler("enterpictureinpicture" as any, null);
+          mediaSessionHandlerRef.current = null;
+        }
+      };
+    }
+  }, [pipWindow, handlePictureInPicture]);
 
   // Clean up PiP window when component unmounts
   useEffect(() => {
