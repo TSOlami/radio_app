@@ -218,6 +218,8 @@ const ChatPanel = ({ onClose, onMarkAsRead, messages }: ChatPanelProps) => {
         >
           <Group gap="xs">
             <TextInput
+              ref={inputRef}
+              autoFocus
               flex={1}
               placeholder="Type a message..."
               value={newMessage}
