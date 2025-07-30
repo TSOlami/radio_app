@@ -130,46 +130,39 @@ const MeetingRoom = () => {
       
       <Box className="relative flex size-full items-center justify-center">
         <Box className={`flex size-full items-center justify-center ${showChat ? 'chat-open' : ''}`}>
-          {pipWindow ? (
-            <>
-              {/* Render call UI in PiP window via portal */}
-              {createPortal(
-                <Box className="h-screen w-full overflow-hidden pt-4 text-white">
-                  <CallLayout />
-                  <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
-                    <CallControls onLeave={() => router.replace("/")} />
-                    <Button
-                      onClick={closePictureInPicture}
-                      size="sm"
-                      variant="filled"
-                      color="red"
-                    >
-                      Exit PiP
-                    </Button>
-                  </Box>
-                </Box>,
-                pipWindow.document.body,
-              )}
-              {/* Keep audio in parent window but hide UI */}
-              <Box style={{ display: 'none' }}>
-                <CallLayout />
-              </Box>
-              {/* Exit PiP button in parent window */}
-              <Box className="fixed top-4 left-4 z-50">
+          {/* Always render the main call layout */}
+          <CallLayout />
+          
+          {/* PiP window overlay */}
+          {pipWindow && createPortal(
+            <Box className="h-screen w-full overflow-hidden pt-4 text-white">
+              <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
+                <CallControls onLeave={() => router.replace("/")} />
                 <Button
                   onClick={closePictureInPicture}
-                  size="lg"
+                  size="sm"
                   variant="filled"
                   color="red"
                 >
-                  Exit Picture-in-Picture
+                  Exit PiP
                 </Button>
               </Box>
-            </>
-          ) : (
-            <>
-              <CallLayout />
-            </>
+            </Box>,
+            pipWindow.document.body,
+          )}
+          
+          {/* Exit PiP button in parent window */}
+          {pipWindow && (
+            <Box className="fixed top-4 left-4 z-50">
+              <Button
+                onClick={closePictureInPicture}
+                size="lg"
+                variant="filled"
+                color="red"
+              >
+                Exit Picture-in-Picture
+              </Button>
+            </Box>
           )}
         </Box>
 
