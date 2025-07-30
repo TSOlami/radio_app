@@ -17,6 +17,7 @@ import { LuLayoutList } from "react-icons/lu";
 import { PiUsersThree } from "react-icons/pi";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { MdPictureInPicture } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import { useRouter, useSearchParams } from "next/navigation";
 import EndCallButton from "./meeting/EndCallButton";
 import ChatPanel from "./meeting/ChatPanel";
@@ -143,8 +144,9 @@ const MeetingRoom = () => {
                   size="sm"
                   variant="filled"
                   color="red"
+                  title="Exit Picture-in-Picture"
                 >
-                  Exit PiP
+                  <IoClose size={16} />
                 </Button>
               </Box>
             </Box>,
@@ -153,16 +155,17 @@ const MeetingRoom = () => {
           
           {/* Exit PiP button in parent window */}
           {pipWindow && (
-            <Box className="fixed top-4 left-4 z-50">
-              <Button
-                onClick={closePictureInPicture}
-                size="lg"
-                variant="filled"
-                color="red"
-              >
-                Exit Picture-in-Picture
-              </Button>
-            </Box>
+                         <Box className="fixed top-4 left-4 z-50">
+               <Button
+                 onClick={closePictureInPicture}
+                 size="lg"
+                 variant="filled"
+                 color="red"
+                 title="Exit Picture-in-Picture"
+               >
+                 <IoClose size={20} />
+               </Button>
+             </Box>
           )}
         </Box>
 
