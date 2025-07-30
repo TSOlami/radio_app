@@ -37,19 +37,14 @@ export const usePictureInPicture = () => {
     }
   }, [pipWindow]);
 
-  // Auto PiP when leaving tab (Media Session API)
+  // Clean up PiP window when component unmounts
   useEffect(() => {
-    if ("mediaSession" in navigator) {
-      navigator.mediaSession.setActionHandler(
-        "enterpictureinpicture" as any,
-        handlePictureInPicture,
-      );
-      
-      return () => {
-        navigator.mediaSession.setActionHandler("enterpictureinpicture" as any, null);
-      };
-    }
-  }, [handlePictureInPicture]);
+    return () => {
+      if (pipWindow) {
+        pipWindow.close();
+      }
+    };
+  }, [pipWindow]);
 
   return {
     pipWindow,
