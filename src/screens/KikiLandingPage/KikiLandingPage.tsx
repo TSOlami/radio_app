@@ -19,10 +19,13 @@ export const KikiLandingPage = (): JSX.Element => {
           <SocialFeaturesSection />
         </div>
 
-        <FAQSection />
+        {/* FAQ Section with proper spacing */}
+        <div className="py-16">
+          <FAQSection />
+        </div>
         
         {/* App Store Section */}
-        <div className="flex flex-col items-center w-full mt-8">
+        <div className="flex flex-col items-center w-full py-16">
           <div className="[font-family:'Manrope',Helvetica] font-medium text-gray-6 text-2xl text-center tracking-[0] leading-normal mb-6">
             <span className="text-[#1a79fb]">Available</span>
             <span className="text-[#4f5966]"> on</span>
@@ -56,7 +59,7 @@ export const KikiLandingPage = (): JSX.Element => {
         </div>
         
         {/* Key App Features Badge */}
-        <div className="flex justify-center w-full mt-8 mb-8">
+        <div className="flex justify-center w-full py-8">
           <Badge className="px-6 py-4 bg-brand-05 rounded-[30px] border border-solid border-[#b7dbff]">
             <span className="[font-family:'Helvetica_Neue-Medium',Helvetica] font-medium text-brandmain text-lg tracking-[-0.36px]">
               Key App Features
@@ -64,9 +67,13 @@ export const KikiLandingPage = (): JSX.Element => {
           </Badge>
         </div>
 
-        <UniqueSellingPropositionSection />
+        {/* Unique Selling Proposition Section */}
+        <div className="py-16">
+          <UniqueSellingPropositionSection />
+        </div>
+
         {/* Phone Mockup */}
-        <div className="flex justify-center w-full relative mb-12">
+        <div className="flex justify-center w-full relative py-16">
           <div className="relative w-[524px]">
             <div className="relative">
               {/* Decorative circles */}
@@ -178,11 +185,19 @@ export const KikiLandingPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* App sections */}
-        <AppDownloadSection />
-        <ProductDisplaySection />
-        <CallToActionSection />
-        <UserProfileSection />
+        {/* App sections with proper spacing */}
+        <div className="py-16">
+          <AppDownloadSection />
+        </div>
+        <div className="py-16">
+          <ProductDisplaySection />
+        </div>
+        <div className="py-16">
+          <CallToActionSection />
+        </div>
+        <div className="py-16">
+          <UserProfileSection />
+        </div>
       </div>
     </div>
   );

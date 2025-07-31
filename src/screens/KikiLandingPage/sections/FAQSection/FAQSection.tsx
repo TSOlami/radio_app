@@ -84,7 +84,7 @@ const featureCards = [
 
 export const FAQSection = (): JSX.Element => {
   return (
-    <section className="w-full max-w-[1200px] mx-auto my-16 relative">
+    <section className="w-full max-w-[1200px] mx-auto relative">
       <div className="relative">
         {/* Blue header section */}
         <div className="w-full h-[447px] bg-brand-6 rounded-[20px] overflow-hidden relative">
