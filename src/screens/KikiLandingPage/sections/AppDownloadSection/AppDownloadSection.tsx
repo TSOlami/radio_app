@@ -1,6 +1,58 @@
 import React from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
 
+const AppFeatureCard = ({ title, description, iconSrc, isComplex, iconSrc1, iconSrc2, isFrame, frameSrc }: any) => (
+  <Card className="w-full h-[120px] rounded-[20px] overflow-hidden bg-[linear-gradient(90deg,rgba(232,242,255,1)_0%,rgba(232,242,255,0)_100%)] border-none flex-shrink-0">
+    <CardContent className="p-0 relative h-full">
+      {/* Icon container */}
+      {isFrame ? (
+        <img
+          className="absolute w-[45px] h-[45px] top-[15px] left-[18px]"
+          alt="Feature icon"
+          src={frameSrc}
+        />
+      ) : (
+        <div className="absolute w-[45px] h-[45px] top-[15px] left-[18px] rounded-xl overflow-hidden shadow-[inset_1px_1px_6px_#fefefe4c] bg-[linear-gradient(136deg,rgba(21,97,201,1)_0%,rgba(26,121,251,1)_100%)]">
+          <div className="relative w-6 h-6 top-2.5 left-[11px]">
+            {isComplex ? (
+              <div className="relative h-6">
+                <img className="absolute w-3 h-3 top-3 left-0" alt="Vector" src={iconSrc1} />
+                <img className="absolute w-[23px] h-[22px] top-0 left-px" alt="Vector" src={iconSrc2} />
+              </div>
+            ) : (
+              <img
+                className={`absolute ${
+                  title === "Reels for Products"
+                    ? "w-4 h-4 top-1 left-1"
+                    : title === "Smart Marketplace"
+                    ? "w-[19px] h-5 top-0.5 left-[3px]"
+                    : title === "Built-in Chat"
+                    ? "w-[22px] h-[18px] top-[3px] left-px"
+                    : "w-5 h-[17px] top-1 left-0.5" // Boost & Promote
+                }`}
+                alt="Vector"
+                src={iconSrc}
+              />
+            )}
+          </div>
+        </div>
+      )}
+      {/* Title */}
+      <div
+        className={`absolute top-6 left-[${
+          title === "Verified Sellers" ? "72px" : "75px"
+        }] [font-family:'Manrope',Helvetica] font-semibold text-black text-xl tracking-[-0.40px] leading-[normal]`}
+      >
+        {title}
+      </div>
+      {/* Description */}
+      <div className="absolute w-[545px] top-[66px] left-[18px] [font-family:'Helvetica_Neue-Regular',Helvetica] font-normal text-gray-6 text-[13px] tracking-[-0.26px] leading-[normal]">
+        {description}
+      </div>
+    </CardContent>
+  </Card>
+);
+
 export const AppDownloadSection = (): JSX.Element => {
   // Feature data for mapping
   const features = [
@@ -48,66 +100,7 @@ export const AppDownloadSection = (): JSX.Element => {
   return (
     <div className="flex flex-col w-full max-w-[612px] items-start gap-2">
       {features.map((feature, index) => (
-        <Card
-          key={index}
-          className="w-full h-[120px] rounded-[20px] overflow-hidden bg-[linear-gradient(90deg,rgba(232,242,255,1)_0%,rgba(232,242,255,0)_100%)] border-none"
-        >
-          <CardContent className="p-0 relative h-full">
-            {/* Icon container */}
-            {feature.isFrame ? (
-              <img
-                className="absolute w-[45px] h-[45px] top-[15px] left-[18px]"
-                alt="Feature icon"
-                src={feature.frameSrc}
-              />
-            ) : (
-              <div className="absolute w-[45px] h-[45px] top-[15px] left-[18px] rounded-xl overflow-hidden shadow-[inset_1px_1px_6px_#fefefe4c] bg-[linear-gradient(136deg,rgba(21,97,201,1)_0%,rgba(26,121,251,1)_100%)]">
-                <div className="relative w-6 h-6 top-2.5 left-[11px]">
-                  {feature.isComplex ? (
-                    <div className="relative h-6">
-                      <img
-                        className="absolute w-3 h-3 top-3 left-0"
-                        alt="Vector"
-                        src={feature.iconSrc1}
-                      />
-                      <img
-                        className="absolute w-[23px] h-[22px] top-0 left-px"
-                        alt="Vector"
-                        src={feature.iconSrc2}
-                      />
-                    </div>
-                  ) : (
-                    <img
-                      className={`absolute ${
-                        feature.title === "Reels for Products"
-                          ? "w-4 h-4 top-1 left-1"
-                          : feature.title === "Smart Marketplace"
-                            ? "w-[19px] h-5 top-0.5 left-[3px]"
-                            : feature.title === "Built-in Chat"
-                              ? "w-[22px] h-[18px] top-[3px] left-px"
-                              : "w-5 h-[17px] top-1 left-0.5" // Boost & Promote
-                      }`}
-                      alt="Vector"
-                      src={feature.iconSrc}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Title */}
-            <div
-              className={`absolute top-6 left-[${feature.title === "Verified Sellers" ? "72px" : "75px"}] [font-family:'Manrope',Helvetica] font-semibold text-black text-xl ${feature.title === "Reels for Products" || feature.title === "Smart Marketplace" ? "text-center" : ""} tracking-[-0.40px] leading-[normal]`}
-            >
-              {feature.title}
-            </div>
-
-            {/* Description */}
-            <div className="absolute w-[545px] top-[66px] left-[18px] [font-family:'Helvetica_Neue-Regular',Helvetica] font-normal text-gray-6 text-[13px] tracking-[-0.26px] leading-[normal]">
-              {feature.description}
-            </div>
-          </CardContent>
-        </Card>
+        <AppFeatureCard key={index} {...feature} />
       ))}
     </div>
   );
