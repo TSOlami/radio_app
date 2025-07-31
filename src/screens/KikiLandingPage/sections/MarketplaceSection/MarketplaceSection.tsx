@@ -7,6 +7,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "../../../../components/ui/navigation-menu";
+import { NavBar } from "../../../../components/ui/navbar";
 
 export const MarketplaceSection = (): JSX.Element => {
   // Navigation menu items data
@@ -20,6 +21,7 @@ export const MarketplaceSection = (): JSX.Element => {
 
   return (
     <section className="relative w-full h-[1088px] rounded-[20px] overflow-hidden bg-[linear-gradient(180deg,rgba(209,228,254,0)_0%,rgba(209,228,254,1)_50%,rgba(209,228,254,0.2)_100%)]">
+      <NavBar />
       <div className="relative w-full h-[1047px] mt-36">
         {/* Background elements */}
         <Card className="absolute w-[427px] h-[726px] top-0 right-[94px] rounded-3xl bg-[linear-gradient(180deg,rgba(209,228,254,1)_0%,rgba(209,228,254,0.31)_100%)] border-none" />
@@ -72,36 +74,6 @@ export const MarketplaceSection = (): JSX.Element => {
             />
           </div>
         </div>
-      </div>
-
-      {/* Navigation bar */}
-      <div className="flex w-full max-w-[1200px] items-center justify-between absolute top-[30px] left-1/2 -translate-x-1/2 px-4 md:px-0">
-        <img
-          className="relative w-[50px] h-[22px]"
-          alt="Logo"
-          src="/logo.png"
-        />
-
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList className="flex items-center gap-[27px]">
-            {navItems.map((item, index) => (
-              <NavigationMenuItem key={index}>
-                <span
-                  className={`relative w-fit mt-[-1.00px] [font-family:'Manrope',Helvetica] ${item.active ? "font-semibold text-black" : "font-medium text-gray-6"} text-base tracking-[-0.32px] leading-[normal]`}
-                >
-                  {item.text}
-                </span>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <Button className="inline-flex items-center gap-2.5 px-[19px] py-2.5 relative bg-brandmain rounded-lg">
-          <span className="relative w-fit mt-[-1.00px] [font-family:'Manrope',Helvetica] font-semibold text-[#fefefe] text-sm tracking-[-0.28px] leading-[normal]">
-            Download App
-          </span>
-          <ArrowDownIcon className="w-4 h-4 text-white" />
-        </Button>
       </div>
     </section>
   );
