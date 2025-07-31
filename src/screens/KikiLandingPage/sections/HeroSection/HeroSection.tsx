@@ -1,28 +1,11 @@
-import { ArrowDownIcon } from "lucide-react";
-import React from "react";
-import { Button } from "../../../../components/ui/button";
 import { Card } from "../../../../components/ui/card";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-} from "../../../../components/ui/navigation-menu";
 import { NavBar } from "../../../../components/ui/navbar";
 
-export const MarketplaceSection = (): JSX.Element => {
-  // Navigation menu items data
-  const navItems = [
-    { text: "Home", active: true },
-    { text: "Features", active: false },
-    { text: "How it works", active: false },
-    { text: "FAQ", active: false },
-    { text: "Contact Us", active: false },
-  ];
-
+export const HeroSection = (): JSX.Element => {
   return (
-    <section className="relative w-full h-[1088px] rounded-[20px] overflow-hidden bg-[linear-gradient(180deg,rgba(209,228,254,0)_0%,rgba(209,228,254,1)_50%,rgba(209,228,254,0.2)_100%)]">
+    <section className="relative w-full h-[988px] rounded-[20px] overflow-hidden bg-[linear-gradient(180deg,rgba(209,228,254,0)_0%,rgba(209,228,254,1)_50%,rgba(209,228,254,0.2)_100%)]">
       <NavBar />
-      <div className="relative w-full h-[1047px] mt-36">
+      <div className="relative w-full h-[947px] mt-36 lg:h-[947px] lg:mt-36 flex flex-col-reverse lg:block items-center px-4">
         {/* Background elements */}
         <Card className="absolute w-[427px] h-[726px] top-0 right-[94px] rounded-3xl bg-[linear-gradient(180deg,rgba(209,228,254,1)_0%,rgba(209,228,254,0.31)_100%)] border-none" />
 
@@ -44,7 +27,7 @@ export const MarketplaceSection = (): JSX.Element => {
             <img
               className="absolute w-[213px] h-[85px] top-[263px] left-[343px]"
               alt="Frame"
-              src="/frame-1618875770.svg"
+              src="/Frame 1618875770.png"
             />
           </div>
 
@@ -64,13 +47,13 @@ export const MarketplaceSection = (): JSX.Element => {
             <img
               className="w-[204px] relative h-[83px]"
               alt="App Store Download"
-              src="/pngegg.png"
+              src="/applestore.png"
             />
 
             <img
               className="w-[217px] relative h-[83px]"
               alt="Google Play Download"
-              src="/pngegg--3--2.png"
+              src="/playstore.png"
             />
           </div>
         </div>

@@ -1,4 +1,4 @@
-export const UserProfileSection = (): JSX.Element => {
+export const Footer = (): JSX.Element => {
   // Footer navigation data
   const footerNavigation = [
     {
@@ -25,7 +25,7 @@ export const UserProfileSection = (): JSX.Element => {
   ];
 
   return (
-    <footer className="w-full py-12 bg-white">
+    <footer className="w-full pt-12 bg-white">
       <div className="container mx-auto px-4 max-w-[1440px]">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Logo and company description */}

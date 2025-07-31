@@ -41,7 +41,7 @@ export const NavBar = () => {
         <span className="relative w-fit mt-[-1.00px] [font-family:'Manrope',Helvetica] font-semibold text-[#fefefe] text-sm tracking-[-0.28px] leading-[normal]">
           Download App
         </span>
-        <ArrowDownIcon className="w-4 h-4 text-white" />
+        <img src="/lsicon_down-filled.png" alt="Arrow Down Icon" />
       </Button>
       {/* Hamburger for mobile */}
       <div className="md:hidden">
@@ -79,7 +79,7 @@ export const NavBar = () => {
             ))}
             <Button className="mt-4 w-full bg-brandmain text-white rounded-lg shadow-md hover:bg-[#1767d9] transition-colors flex items-center justify-center gap-2.5">
               <span className="font-semibold text-sm">Download App</span>
-              <ArrowDownIcon className="w-4 h-4 text-white" />
+              <img src="/lsicon_down-filled.png" alt="Arrow Down Icon" />
             </Button>
           </div>
         </div>

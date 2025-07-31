@@ -1,8 +1,6 @@
-import React from "react";
-
 export const UniqueSellingPropositionSection = (): JSX.Element => {
   return (
-    <section className="w-full max-w-3xl mx-auto py-16 text-center">
+    <section className="w-full max-w-3xl mx-auto py-6 text-center">
       <h2 className="text-4xl tracking-tight leading-tight">
         <span className="font-semibold text-gray-6 tracking-[-0.32px]">
           Not just a marketplace. Not just social. It&apos;s both — and{" "}

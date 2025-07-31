@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
 
 const SocialFeatureCard = ({ icon, iconSrc, text, customIcon }: any) => (
@@ -33,14 +32,14 @@ const SocialFeatureCard = ({ icon, iconSrc, text, customIcon }: any) => (
 export const SocialFeaturesSection = (): JSX.Element => {
   const socialFeatures = [
     {
-      icon: "/frame-1618875649.svg",
+      icon: "/ic_baseline-download.png",
       text: (
         <>
           <span className="font-medium text-[#030c19]">Over </span>
           <span className="font-semibold text-[#1a79fb]">2000 Verified Sellers</span>
         </>
       ),
-      customIcon: true,
+      customIcon: false,
     },
     {
       text: (
@@ -51,7 +50,7 @@ export const SocialFeaturesSection = (): JSX.Element => {
         </>
       ),
       customIcon: false,
-      iconSrc: "/vector-8.svg",
+      iconSrc: "/ic_baseline-download.png",
     },
     {
       text: (
@@ -61,7 +60,7 @@ export const SocialFeaturesSection = (): JSX.Element => {
         </>
       ),
       customIcon: false,
-      iconSrc: "/vector-10.svg",
+      iconSrc: "/ri_building-2-fill.png",
     },
   ];
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
 
 export const CallToActionSection = (): JSX.Element => {
@@ -7,29 +6,48 @@ export const CallToActionSection = (): JSX.Element => {
       {/* Right side device mockup */}
       <div className="absolute w-[604px] h-[604px] top-[-79px] right-0">
         <img
-          className="absolute w-[324px] h-[410px] top-[79px] left-[201px] object-cover"
-          alt="Pngegg"
-          src="/pngegg--46--4-1.png"
+          className="absolute w-[324px] h-[410px] top-[-22px] left-[380px] opacity-30 mix-blend-luminosity object-cover"
+          alt="Right Pngegg"
+          src="/pngegg (46).png"
         />
 
-        <div className="absolute w-[604px] h-[604px] top-0 left-0">
-          <div className="relative w-[525px] h-[446px] top-[79px] bg-[url(/mockup.png)] bg-cover bg-[50%_50%]">
+        <div className="absolute w-[604px] h-[604px] top-[-10px] right-0">
+          <div className="relative w-full h-full">
+            <div
+              className="absolute w-full h-full top-0 left-0 z-[10]"
+              style={{
+                WebkitMaskImage: "url('/mask.png')",
+                WebkitMaskSize: 'cover',
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskImage: "url('/mask.png')",
+                maskSize: 'cover',
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center',
+              }}
+            >
+              <img
+                className="absolute w-[162.8px] h-[373.08px] top-[108px] left-[220px] object-cover"
+                alt="App Screenshot"
+                src="/marketplacehome3.png"
+              />
+            </div>
+
             <img
-              className="absolute w-[525px] h-[446px] top-0 left-0"
-              alt="Mask group"
-              src="/mask-group.png"
+              className="absolute w-full h-full top-0 left-0 z-[5] object-cover"
+              alt="Device Frame"
+              src="/mockup.png"
             />
           </div>
         </div>
       </div>
-
-      {/* Left side content */}
+      
       <CardContent className="relative h-full p-0">
         <div className="absolute w-[637px] h-[379px] top-[67px] left-0">
           <img
-            className="absolute w-64 h-[368px] top-[11px] left-0 object-cover"
-            alt="Pngegg"
-            src="/pngegg--46--4-1.png"
+            className="absolute w-[512px] h-[512px] top-[18px] left-[-256px] opacity-30 mix-blend-luminosity object-cover"
+            alt="Left Pngegg"
+            src="/pngegg (46).png"
           />
 
           <div className="inline-flex flex-col items-start gap-4 absolute top-0 left-[46px]">
@@ -50,17 +68,17 @@ export const CallToActionSection = (): JSX.Element => {
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-2.5 relative flex-[0_0_auto]">
+            <div className="inline-flex gap-2.5">
               <img
-                className="relative w-[143px] h-[55px]"
+                className="relative w-[143px] h-[55px] opacity-80"
                 alt="App Store"
-                src="/pngegg--3--1-1.png"
+                src="/applestore.png"
               />
 
               <img
-                className="relative w-[143px] h-[55px]"
+                className="relative w-[143px] h-[55px] opacity-80"
                 alt="Google Play"
-                src="/pngegg--3--2-1.png"
+                src="/playstore.png"
               />
             </div>
           </div>
