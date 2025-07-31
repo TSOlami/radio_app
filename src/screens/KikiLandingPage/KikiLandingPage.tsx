@@ -1,9 +1,7 @@
-import React from "react";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { AppDownloadSection } from "./sections/AppDownloadSection";
 import { CallToActionSection } from "./sections/CallToActionSection";
-import { ChatSection } from "./sections/ChatSection";
 import { FAQSection } from "./sections/FAQSection";
 import { MarketplaceSection } from "./sections/MarketplaceSection";
 import { ProductDisplaySection } from "./sections/ProductDisplaySection";
@@ -22,17 +20,7 @@ export const KikiLandingPage = (): JSX.Element => {
         </div>
 
         <FAQSection />
-        <UniqueSellingPropositionSection />
-
-        {/* Key App Features Badge */}
-        <div className="flex justify-center w-full mt-8 mb-8">
-          <Badge className="px-6 py-4 bg-brand-05 rounded-[30px] border border-solid border-[#b7dbff]">
-            <span className="[font-family:'Helvetica_Neue-Medium',Helvetica] font-medium text-brandmain text-lg tracking-[-0.36px]">
-              Key App Features
-            </span>
-          </Badge>
-        </div>
-
+        
         {/* App Store Section */}
         <div className="flex flex-col items-center w-full mt-8">
           <div className="[font-family:'Manrope',Helvetica] font-medium text-gray-6 text-2xl text-center tracking-[0] leading-normal mb-6">
@@ -66,7 +54,17 @@ export const KikiLandingPage = (): JSX.Element => {
             </Button>
           </div>
         </div>
+        
+        {/* Key App Features Badge */}
+        <div className="flex justify-center w-full mt-8 mb-8">
+          <Badge className="px-6 py-4 bg-brand-05 rounded-[30px] border border-solid border-[#b7dbff]">
+            <span className="[font-family:'Helvetica_Neue-Medium',Helvetica] font-medium text-brandmain text-lg tracking-[-0.36px]">
+              Key App Features
+            </span>
+          </Badge>
+        </div>
 
+        <UniqueSellingPropositionSection />
         {/* Phone Mockup */}
         <div className="flex justify-center w-full relative mb-12">
           <div className="relative w-[524px]">
@@ -182,7 +180,6 @@ export const KikiLandingPage = (): JSX.Element => {
 
         {/* App sections */}
         <AppDownloadSection />
-        <ChatSection />
         <ProductDisplaySection />
         <CallToActionSection />
         <UserProfileSection />
