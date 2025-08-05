@@ -151,12 +151,11 @@ const MeetingRoom = () => {
 
       {pipWindow ? (
         <>
-          {/* PiP Window Content */}
+          {/* PiP Window Content - Following Stream's recommended pattern */}
           {createPortal(
             <StreamTheme>
               <Box className="h-screen w-full">
-                <ParticipantsAudio participants={remoteParticipants} />
-                <SpeakerLayout />
+                <SpeakerLayout muted />
                 <Box className="fixed bottom-0 flex w-full items-center justify-center gap-3 pb-4 z-50">
                   <CallControls onLeave={() => router.replace("/")} />
                 </Box>
@@ -165,23 +164,44 @@ const MeetingRoom = () => {
             pipWindow.document.body
           )}
           
-          {/* Main Window - Minimized View */}
-          <Box className="flex size-full items-center justify-center bg-gray-900">
-            <Box className="text-center">
-              <Box className="mb-4 text-2xl font-bold">Meeting in Picture-in-Picture</Box>
-              <Box className="text-gray-400">Your meeting is now running in a separate window</Box>
-              <Box className="mt-4">
-                <ActionIcon
-                  onClick={closePipWindow}
-                  title="Close Picture-in-Picture"
-                  size="lg"
-                  variant="filled"
-                  color="blue"
-                >
-                  <PiArrowDownRightBold size={24} />
-                </ActionIcon>
-              </Box>
+          {/* Main Window - Keep the original layout but add exit button */}
+          <Box className="relative flex size-full items-center justify-center">
+            <Box
+              className={`flex size-full items-center justify-center ${
+                showChat ? "chat-open" : ""
+              }`}
+            >
+              <ParticipantsAudio participants={remoteParticipants} />
+              <CallLayout />
             </Box>
+
+            {showParticipants && (
+              <Box className="h-screen ml-5 hidden md:block">
+                <CallParticipantsList onClose={() => setShowParticipants(false)} />
+              </Box>
+            )}
+
+            {showChat && (
+              <ChatPanel
+                onClose={() => setShowChat(false)}
+                onMarkAsRead={markAsReadFromPersistence}
+                messages={messages}
+                isOpen={showChat}
+              />
+            )}
+          </Box>
+
+          {/* Exit PiP Button - Following Stream's pattern */}
+          <Box className="fixed top-4 left-4 z-50">
+            <ActionIcon
+              onClick={closePipWindow}
+              title="Exit Picture-in-Picture"
+              size="lg"
+              variant="filled"
+              color="red"
+            >
+              <PiArrowDownRightBold size={24} />
+            </ActionIcon>
           </Box>
         </>
       ) : (
@@ -214,84 +234,82 @@ const MeetingRoom = () => {
         </>
       )}
 
-      {!pipWindow && (
-        <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
-          <CallControls onLeave={() => router.replace("/")} />
-          <Menu transitionProps={{ transition: "rotate-right", duration: 150 }}>
-            <Menu.Target>
-              <ActionIcon
-                title="Layout"
-                variant="transparent"
-                classNames={{ root: classes.action_bg }}
-              >
-                <LuLayoutList size={20} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown classNames={{ dropdown: classes.menu_dropdown }}>
-              {["Grid", "Speaker-Left", "Speaker-Right"].map((type, idx) => (
-                <Menu.Item key={idx} onClick={() => setLayout(type.toLowerCase() as CallLayoutType)}>
-                  {type}
-                </Menu.Item>
-              ))}
-            </Menu.Dropdown>
-          </Menu>
-          <ActionIcon
-            title="Participants"
-            variant="transparent"
-            classNames={{ root: classes.action_bg }}
-            onClick={() => setShowParticipants((p) => !p)}
-          >
-            <PiUsersThree size={20} />
-          </ActionIcon>
-          <Box pos="relative">
+      <Box className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-3 pb-4 z-50">
+        <CallControls onLeave={() => router.replace("/")} />
+        <Menu transitionProps={{ transition: "rotate-right", duration: 150 }}>
+          <Menu.Target>
             <ActionIcon
-              title="Chat"
+              title="Layout"
               variant="transparent"
               classNames={{ root: classes.action_bg }}
-              onClick={() => {
-                setShowChat((prev) => {
-                  const willOpen = !prev;
-                  if (willOpen) markAsRead();
-                  return willOpen;
-                });
-              }}
             >
-              <IoChatbubbleEllipsesOutline size={20} />
+              <LuLayoutList size={20} />
             </ActionIcon>
-            <Transition
-              mounted={hasUnreadMessages && unreadCount > 0}
-              transition="pop"
-              duration={200}
-              timingFunction="ease"
-            >
-              {(styles) => (
-                <Badge
-                  size="xs"
-                  variant="filled"
-                  color="red"
-                  pos="absolute"
-                  top={-8}
-                  right={-8}
-                  style={{
-                    minWidth: "18px",
-                    height: "18px",
-                    fontSize: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: "50%",
-                    ...styles,
-                  }}
-                >
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </Badge>
-              )}
-            </Transition>
-          </Box>
-          <CallStatsButton />
-          {!isPersonalRoom && <EndCallButton />}
+          </Menu.Target>
+          <Menu.Dropdown classNames={{ dropdown: classes.menu_dropdown }}>
+            {["Grid", "Speaker-Left", "Speaker-Right"].map((type, idx) => (
+              <Menu.Item key={idx} onClick={() => setLayout(type.toLowerCase() as CallLayoutType)}>
+                {type}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
+        <ActionIcon
+          title="Participants"
+          variant="transparent"
+          classNames={{ root: classes.action_bg }}
+          onClick={() => setShowParticipants((p) => !p)}
+        >
+          <PiUsersThree size={20} />
+        </ActionIcon>
+        <Box pos="relative">
+          <ActionIcon
+            title="Chat"
+            variant="transparent"
+            classNames={{ root: classes.action_bg }}
+            onClick={() => {
+              setShowChat((prev) => {
+                const willOpen = !prev;
+                if (willOpen) markAsRead();
+                return willOpen;
+              });
+            }}
+          >
+            <IoChatbubbleEllipsesOutline size={20} />
+          </ActionIcon>
+          <Transition
+            mounted={hasUnreadMessages && unreadCount > 0}
+            transition="pop"
+            duration={200}
+            timingFunction="ease"
+          >
+            {(styles) => (
+              <Badge
+                size="xs"
+                variant="filled"
+                color="red"
+                pos="absolute"
+                top={-8}
+                right={-8}
+                style={{
+                  minWidth: "18px",
+                  height: "18px",
+                  fontSize: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  ...styles,
+                }}
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Badge>
+            )}
+          </Transition>
         </Box>
-      )}
+        <CallStatsButton />
+        {!isPersonalRoom && <EndCallButton />}
+      </Box>
     </Box>
   );
 };
