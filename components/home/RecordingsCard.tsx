@@ -11,10 +11,10 @@ import {
   Title,
 } from "@mantine/core";
 import VideoIcon from "../icons/Video";
-import PlayIcon from "../icons/Play";
+import { PlayIcon } from "../icons/Play";
 import { CallRecording } from "@stream-io/video-react-sdk";
 import dayjs from "dayjs";
-import CopyIcon from "../icons/Copy";
+import { CopyIcon } from "../icons/Copy";
 import Link from "next/link";
 
 const RecordingsCard = ({ recordings }: { recordings: CallRecording }) => {

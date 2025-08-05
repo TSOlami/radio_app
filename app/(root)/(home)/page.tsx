@@ -4,8 +4,8 @@ import Banner from "@/components/home/Banner";
 import MeetingTypeCard from "@/components/home/MeetingTypeCard";
 import TodayEvents from "@/components/home/TodayEvents";
 import { meeting_types } from "@/constants/meeting_types";
-import { MeetingTypesProps } from "@/custom-type";
 import { SimpleGrid, Box, Container } from "@mantine/core";
+import { MeetingTypesProps } from "@/custom-type";
 
 export default function Home() {
   return (

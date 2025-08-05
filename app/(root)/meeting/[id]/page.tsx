@@ -8,6 +8,7 @@ import { useUser } from "@clerk/nextjs";
 import { Box } from "@mantine/core";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { useState } from "react";
+import { PiPProvider } from "@/context/PiPContext";
 
 const Meeting = ({ params: { id } }: { params: { id: string } }) => {
   const { user, isLoaded } = useUser();
@@ -22,8 +23,9 @@ const Meeting = ({ params: { id } }: { params: { id: string } }) => {
           {!isSetupComplete ? (
             <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
           ) : (
-            <MeetingRoom />
-          )}
+            <PiPProvider>
+              <MeetingRoom />
+            </PiPProvider>)}
         </StreamTheme>
       </StreamCall>
     </Box>

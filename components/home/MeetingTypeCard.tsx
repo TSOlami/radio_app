@@ -1,4 +1,4 @@
-import { Card, Text, Group, Box } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

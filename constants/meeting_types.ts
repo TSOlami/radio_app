@@ -1,7 +1,6 @@
 import CreateIcon from "@/components/icons/Create";
-import CopyIcon from "@/components/icons/Copy";
-import UserPlusIcon from "@/components/icons/UserPlus";
 import EventDateIcon from "@/components/icons/EventDate";
+import UserPlusIcon from "@/components/icons/UserPlus";
 import VideoIcon from "@/components/icons/Video";
 import { MeetingTypesProps } from "@/custom-type";
 
