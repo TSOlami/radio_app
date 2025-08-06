@@ -44,6 +44,8 @@ class ProductRecommendationService:
             if not self.cleaned_dataset.empty:
                 sample_products = self.cleaned_dataset.drop_duplicates(subset=['StockCode']).head(1000)
                 self.vector_service.upsert_products(sample_products)
+                # Ensure products_df is set for local search
+                self.vector_service.products_df = sample_products
             
             self.is_initialized = True
             print("Recommendation service initialized successfully!")

@@ -132,28 +132,28 @@ class PineconeVectorService:
     def search_similar_products(self, query: str, top_k: int = 5) -> List[Dict]:
         """Search for similar products using the query."""
         try:
+            # Always use local similarity search if no index or vectorizer not fitted
+            if self.index is None or not hasattr(self.vectorizer, 'vocabulary_'):
+                return self._local_similarity_search(query, top_k)
+            
             # Generate query vector
             query_vector = self.vectorizer.transform([query.lower()])
             
-            if self.index:
-                # Use Pinecone search
-                results = self.index.query(
-                    vector=query_vector.toarray()[0].tolist(),
-                    top_k=top_k,
-                    include_metadata=True
-                )
-                
-                return [
-                    {
-                        'id': match['id'],
-                        'score': match['score'],
-                        'metadata': match['metadata']
-                    }
-                    for match in results['matches']
-                ]
-            else:
-                # Use local similarity search
-                return self._local_similarity_search(query, top_k)
+            # Use Pinecone search
+            results = self.index.query(
+                vector=query_vector.toarray()[0].tolist(),
+                top_k=top_k,
+                include_metadata=True
+            )
+            
+            return [
+                {
+                    'id': match['id'],
+                    'score': match['score'],
+                    'metadata': match['metadata']
+                }
+                for match in results['matches']
+            ]
                 
         except Exception as e:
             print(f"Search failed: {e}")
@@ -165,11 +165,26 @@ class PineconeVectorService:
             return []
         
         try:
+            # Ensure vectorizer is fitted
+            if not hasattr(self.vectorizer, 'vocabulary_'):
+                # Fit vectorizer on product data
+                combined_text = (
+                    self.products_df['Description'].fillna('') + ' ' +
+                    self.products_df['StockCode'].fillna('') + ' ' +
+                    self.products_df['Country'].fillna('')
+                ).str.lower()
+                self.vectorizer.fit(combined_text)
+            
             # Generate query vector
             query_vector = self.vectorizer.transform([query.lower()])
             
             # Generate product vectors
-            product_vectors = self.generate_product_vectors(self.products_df)
+            combined_text = (
+                self.products_df['Description'].fillna('') + ' ' +
+                self.products_df['StockCode'].fillna('') + ' ' +
+                self.products_df['Country'].fillna('')
+            ).str.lower()
+            product_vectors = self.vectorizer.transform(combined_text)
             
             # Calculate similarities
             similarities = cosine_similarity(query_vector, product_vectors)[0]
@@ -179,7 +194,7 @@ class PineconeVectorService:
             
             results = []
             for idx in top_indices:
-                if similarities[idx] > 0.1:  # Minimum similarity threshold
+                if similarities[idx] > 0.01:  # Lower threshold for more results
                     row = self.products_df.iloc[idx]
                     results.append({
                         'id': f"product_{idx}",

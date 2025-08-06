@@ -5,305 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Recommendation System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 80px 0;
-        }
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            border-radius: 15px;
-            height: 100%;
-        }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        .stats-section {
-            background-color: #f8f9fa;
-            padding: 60px 0;
-        }
-        .stat-item {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #667eea;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-shopping-cart me-2"></i>
-                Product Recommendation System
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/service-status">Service Status</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dataset-summary">Dataset Info</a>
-                    </li>
-                </ul>
+            <a class="navbar-brand" href="/">Product Recommendation System</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/service-status">Service Status</a>
+                <a class="nav-link" href="/dataset-summary">Dataset Info</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="container text-center">
-            <h1 class="display-4 fw-bold mb-4">Intelligent Product Discovery</h1>
-            <p class="lead mb-5">Discover products through text, handwritten queries, and image recognition using advanced AI technologies</p>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <span class="badge bg-light text-dark p-2">Vector Database</span>
-                        <span class="badge bg-light text-dark p-2">OCR Technology</span>
-                        <span class="badge bg-light text-dark p-2">CNN Classification</span>
-                        <span class="badge bg-light text-dark p-2">Natural Language Processing</span>
+    <div class="container mt-5">
+        <h1>Product Recommendation System</h1>
+        <p>Choose your search method:</p>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Text Query Interface</h5>
+                        <p class="card-text">Search for products using natural language queries.</p>
+                        <a href="/text-query" class="btn btn-primary">Text Search</a>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Image Query Interface</h5>
+                        <p class="card-text">Upload images with handwritten queries for OCR processing.</p>
+                        <a href="/image-query" class="btn btn-success">Image Query</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Product Image Upload</h5>
+                        <p class="card-text">Upload product images for identification using CNN.</p>
+                        <a href="/product-image" class="btn btn-warning">Product Image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3>System Information</h3>
+            <div id="system-info">
+                <p>Loading system information...</p>
             </div>
         </div>
     </div>
-
-    <!-- Features Section -->
-    <div class="container my-5">
-        <div class="row text-center mb-5">
-            <div class="col-lg-12">
-                <h2 class="display-5 fw-bold">Choose Your Search Method</h2>
-                <p class="lead text-muted">Experience three different ways to find products using cutting-edge AI</p>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <!-- Text Query Interface -->
-            <div class="col-lg-4">
-                <div class="card feature-card shadow-sm h-100">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon text-primary">
-                            <i class="fas fa-keyboard"></i>
-                        </div>
-                        <h4 class="card-title mb-3">Text Query Interface</h4>
-                        <p class="card-text text-muted mb-4">
-                            Search for products using natural language queries. Our AI understands your intent and finds the best matches.
-                        </p>
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <strong>Features:</strong> Natural language processing, query validation, similarity search
-                            </small>
-                        </div>
-                        <a href="/text-query" class="btn btn-primary btn-custom">
-                            <i class="fas fa-search me-2"></i>Start Text Search
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Image Query Interface -->
-            <div class="col-lg-4">
-                <div class="card feature-card shadow-sm h-100">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon text-success">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <h4 class="card-title mb-3">Image Query Interface</h4>
-                        <p class="card-text text-muted mb-4">
-                            Upload images with handwritten queries. Our OCR technology extracts text and finds matching products.
-                        </p>
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <strong>Features:</strong> OCR processing, handwriting recognition, text extraction
-                            </small>
-                        </div>
-                        <a href="/image-query" class="btn btn-success btn-custom">
-                            <i class="fas fa-camera me-2"></i>Upload Image Query
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Image Interface -->
-            <div class="col-lg-4">
-                <div class="card feature-card shadow-sm h-100">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon text-warning">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <h4 class="card-title mb-3">Product Image Upload</h4>
-                        <p class="card-text text-muted mb-4">
-                            Upload product images for identification. Our CNN model recognizes products and suggests similar items.
-                        </p>
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <strong>Features:</strong> CNN classification, product recognition, similarity matching
-                            </small>
-                        </div>
-                        <a href="/product-image" class="btn btn-warning btn-custom">
-                            <i class="fas fa-upload me-2"></i>Upload Product Image
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats Section -->
-    <div class="stats-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center mb-5">
-                    <h3 class="fw-bold">System Statistics</h3>
-                    <p class="text-muted">Real-time information about our recommendation system</p>
-                </div>
-            </div>
-            <div class="row" id="stats-row">
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number" id="total-products">Loading...</div>
-                        <div class="text-muted">Total Products</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number" id="total-records">Loading...</div>
-                        <div class="text-muted">Dataset Records</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number" id="countries">Loading...</div>
-                        <div class="text-muted">Countries</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number" id="services-status">Loading...</div>
-                        <div class="text-muted">Services Active</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- How It Works Section -->
-    <div class="container my-5">
-        <div class="row text-center mb-5">
-            <div class="col-lg-12">
-                <h3 class="fw-bold">How It Works</h3>
-                <p class="lead text-muted">Our AI-powered system uses multiple technologies to understand your needs</p>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-database fa-3x text-primary"></i>
-                    </div>
-                    <h5>Data Processing</h5>
-                    <p class="text-muted small">Clean and structure e-commerce data for optimal search performance</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-vector-square fa-3x text-success"></i>
-                    </div>
-                    <h5>Vector Search</h5>
-                    <p class="text-muted small">Convert products to vectors and find semantic similarities</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-text-height fa-3x text-warning"></i>
-                    </div>
-                    <h5>Text Extraction</h5>
-                    <p class="text-muted small">Advanced OCR technology to read handwritten queries</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-brain fa-3x text-danger"></i>
-                    </div>
-                    <h5>AI Recognition</h5>
-                    <p class="text-muted small">CNN models trained to identify and classify products</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2024 Product Recommendation System. Built with AI and Machine Learning.</p>
-        </div>
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Load statistics on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadStatistics();
+            loadSystemInfo();
         });
 
-        async function loadStatistics() {
+        async function loadSystemInfo() {
             try {
-                // Load dataset summary
                 const summaryResponse = await fetch('/dataset-summary');
                 const summary = await summaryResponse.json();
                 
-                // Load service status
-                const statusResponse = await fetch('/service-status');
-                const status = await statusResponse.json();
-
-                // Update statistics
                 if (summary && !summary.error) {
-                    document.getElementById('total-products').textContent = summary.unique_products || 'N/A';
-                    document.getElementById('total-records').textContent = summary.total_records || 'N/A';
-                    document.getElementById('countries').textContent = summary.countries || 'N/A';
-                }
-
-                if (status && !status.error) {
-                    const activeServices = Object.values(status).filter(v => v === true).length;
-                    document.getElementById('services-status').textContent = activeServices;
+                    document.getElementById('system-info').innerHTML = `
+                        <ul>
+                            <li>Total Products: ${summary.unique_products || 'N/A'}</li>
+                            <li>Total Records: ${summary.total_records || 'N/A'}</li>
+                            <li>Countries: ${summary.countries || 'N/A'}</li>
+                        </ul>
+                    `;
                 }
             } catch (error) {
-                console.error('Error loading statistics:', error);
-                document.getElementById('total-products').textContent = 'Error';
-                document.getElementById('total-records').textContent = 'Error';
-                document.getElementById('countries').textContent = 'Error';
-                document.getElementById('services-status').textContent = 'Error';
+                document.getElementById('system-info').innerHTML = '<p>Error loading system information</p>';
             }
         }
     </script>
