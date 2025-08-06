@@ -1,1 +1,14 @@
 flask
+pandas
+numpy
+scikit-learn
+pinecone
+pytesseract
+Pillow
+requests
+beautifulsoup4
+selenium
+tensorflow
+opencv-python
+matplotlib
+seaborn
